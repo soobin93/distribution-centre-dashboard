@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import StatCard from '../../components/StatCard'
 import Badge from '../../components/Badge'
+import { BarChart, DonutChart } from '../../components/Charts'
 import { getProgramSummary, getProjects } from '../../api/program'
 import { programSummary as fallbackSummary, projects as fallbackProjects } from './mock'
 import type { ProgramSummary, Project } from './types'
@@ -107,6 +108,43 @@ const ProgramSummaryPage = () => {
               </div>
             </NavLink>
           ))}
+        </div>
+      </div>
+
+      <div className="section">
+        <div className="section__header">
+          <h2>Program Insights</h2>
+          <span className="section__meta">Executive view</span>
+        </div>
+        <div className="grid grid--split">
+          <div className="card card--light">
+            <h3>Budget mix</h3>
+            <p className="card__body">Approved baseline vs variations across the program.</p>
+            <BarChart
+              items={[
+                { label: 'Baseline', value: summary.total_original_budget, color: '#5672ff' },
+                { label: 'Variations', value: summary.total_variations, color: '#9d7bff' },
+              ]}
+            />
+          </div>
+          <div className="card card--light">
+            <h3>Spend vs forecast</h3>
+            <p className="card__body">Actuals tracked against current forecast.</p>
+            <DonutChart
+              value={summary.total_actual_spend}
+              total={summary.total_forecast_cost}
+              label="Actuals"
+            />
+          </div>
+          <div className="card card--light">
+            <h3>Milestones completed</h3>
+            <p className="card__body">Overall completion across both distribution centres.</p>
+            <DonutChart
+              value={summary.milestones_completed.completed}
+              total={summary.milestones_completed.total}
+              label="Complete"
+            />
+          </div>
         </div>
       </div>
 

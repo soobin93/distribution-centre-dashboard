@@ -1,0 +1,78 @@
+.donut {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.donut svg {
+  transform: rotate(-90deg);
+}
+
+.donut__track {
+  fill: none;
+  stroke: var(--slate-100);
+}
+
+.donut__value {
+  fill: none;
+  stroke: #2a1860;
+  stroke-linecap: round;
+}
+
+.donut__label {
+  position: absolute;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.donut__label strong {
+  font-size: 20px;
+  color: var(--slate-900);
+}
+
+.donut__label span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--slate-500);
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.bar__label {
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+}
+
+.bar__track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--slate-100);
+  overflow: hidden;
+}
+
+.bar__fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.bar__value {
+  font-weight: 600;
+  color: var(--slate-700);
+}
