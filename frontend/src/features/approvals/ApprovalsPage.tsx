@@ -1,0 +1,49 @@
+import Badge from '../../components/Badge'
+import { approvals } from './mock'
+
+const statusTone = (status: string) => {
+  if (status === 'approved') return 'success'
+  if (status === 'pending') return 'warning'
+  return 'danger'
+}
+
+const ApprovalsPage = () => {
+  return (
+    <section className="page">
+      <div className="page__header">
+        <div>
+          <h1>Approvals Workflow</h1>
+          <p className="page__subtitle">
+            Pending and completed approvals across all project entities.
+          </p>
+        </div>
+      </div>
+
+      <div className="table">
+        <div className="table__header">
+          <span>Entity</span>
+          <span>Requested By</span>
+          <span>Requested</span>
+          <span>Reviewed</span>
+          <span>Status</span>
+          <span>Decision</span>
+        </div>
+        {approvals.map((approval) => (
+          <div className="table__row" key={approval.id}>
+            <div>
+              <strong>{approval.entity_type}</strong>
+              <div className="subtle">{approval.entity_id}</div>
+            </div>
+            <span>{approval.requested_by}</span>
+            <span>{approval.requested_at.split('T')[0]}</span>
+            <span>{approval.reviewed_at?.split('T')[0] ?? '—'}</span>
+            <Badge label={approval.status} tone={statusTone(approval.status)} />
+            <span className="subtle">{approval.decision_note}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export default ApprovalsPage

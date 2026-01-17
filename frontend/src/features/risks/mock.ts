@@ -1,0 +1,36 @@
+import type { Risk } from './types'
+
+export const risks: Risk[] = [
+  {
+    id: 'risk-001',
+    project_id: 'proj-nb-001',
+    title: 'Supply chain delays for steel',
+    description: 'Extended lead times could impact frame erection.',
+    category: 'Procurement',
+    likelihood: 3,
+    impact: 4,
+    rating: 12,
+    status: 'mitigating',
+    owner: 'A. Collins',
+    due_date: '2026-02-01',
+    mitigation_plan: 'Secure secondary supplier and expedite freight.',
+    created_at: '2025-10-01T09:00:00Z',
+    updated_at: '2026-01-09T03:15:00Z',
+  },
+  {
+    id: 'risk-002',
+    project_id: 'proj-sb-002',
+    title: 'Automation integration complexity',
+    description: 'Legacy systems may not align with new automation specs.',
+    category: 'Technical',
+    likelihood: 4,
+    impact: 4,
+    rating: 16,
+    status: 'open',
+    owner: 'J. Ahmed',
+    due_date: '2026-03-05',
+    mitigation_plan: 'Early vendor design workshops and integration testing.',
+    created_at: '2025-11-12T09:00:00Z',
+    updated_at: '2026-01-13T00:25:00Z',
+  },
+]

@@ -1,0 +1,40 @@
+import type { Milestone } from './types'
+
+export const milestones: Milestone[] = [
+  {
+    id: 'ms-001',
+    project_id: 'proj-nb-001',
+    name: 'Site mobilisation complete',
+    description: 'Site offices, fencing, and safety controls established.',
+    planned_date: '2025-08-12',
+    actual_date: '2025-08-10',
+    status: 'done',
+    percent_complete: 100,
+    created_at: '2025-07-10T09:00:00Z',
+    updated_at: '2025-08-11T01:00:00Z',
+  },
+  {
+    id: 'ms-002',
+    project_id: 'proj-nb-001',
+    name: 'Structural steel erected',
+    description: 'Main warehouse frame and mezzanine complete.',
+    planned_date: '2026-02-05',
+    actual_date: null,
+    status: 'in_progress',
+    percent_complete: 65,
+    created_at: '2025-09-01T09:00:00Z',
+    updated_at: '2026-01-12T02:35:00Z',
+  },
+  {
+    id: 'ms-003',
+    project_id: 'proj-sb-002',
+    name: 'Automation procurement',
+    description: 'Vendor selection and contract finalised.',
+    planned_date: '2026-01-20',
+    actual_date: null,
+    status: 'at_risk',
+    percent_complete: 40,
+    created_at: '2025-10-04T09:00:00Z',
+    updated_at: '2026-01-14T00:40:00Z',
+  },
+]

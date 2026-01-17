@@ -1,0 +1,25 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1f2f5c" />
+      <stop offset="100%" stop-color="#16224a" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)" />
+  <g opacity="0.3" stroke="#9fb4e8" stroke-width="1">
+    <path d="M100 140H1100" />
+    <path d="M100 280H1100" />
+    <path d="M100 420H1100" />
+    <path d="M100 560H1100" />
+    <path d="M250 80V600" />
+    <path d="M450 80V600" />
+    <path d="M650 80V600" />
+    <path d="M850 80V600" />
+  </g>
+  <g stroke="#e8f0ff" stroke-width="3" opacity="0.9">
+    <rect x="180" y="180" width="360" height="200" rx="16" />
+    <rect x="580" y="180" width="420" height="260" rx="16" />
+    <path d="M180 430H1000" />
+  </g>
+  <text x="180" y="520" fill="#e8f0ff" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="24" letter-spacing="4">SERVICES LAYOUT</text>
+</svg>
