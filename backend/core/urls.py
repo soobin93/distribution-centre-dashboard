@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from core.features.auth.views import CsrfView, LoginView, LogoutView, MeView
 from core.features.activity.views import ActivityLogViewSet
 from core.features.approvals.views import ApprovalViewSet
 from core.features.budgets.views import BudgetItemViewSet
@@ -23,6 +24,10 @@ router.register(r'approvals', ApprovalViewSet)
 router.register(r'activity', ActivityLogViewSet)
 
 urlpatterns = [
+    path('auth/csrf/', CsrfView.as_view(), name='csrf'),
+    path('auth/login/', LoginView.as_view(), name='login'),
+    path('auth/logout/', LogoutView.as_view(), name='logout'),
+    path('auth/me/', MeView.as_view(), name='me'),
     path('summary/', ProgramSummaryView.as_view(), name='program-summary'),
     path('', include(router.urls)),
 ]
