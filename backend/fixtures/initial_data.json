@@ -1,0 +1,379 @@
+[
+  {
+    "model": "core.project",
+    "pk": "proj-nb-001",
+    "fields": {
+      "name": "North Brisbane Distribution Centre",
+      "location": "Brendale, QLD",
+      "status": "active",
+      "start_date": "2025-07-01",
+      "end_date": "2026-12-15",
+      "description": "Greenfield distribution hub with cold-chain capability.",
+      "program_name": "Distribution Centres",
+      "phase": "Construction",
+      "created_at": "2025-06-12T09:00:00Z",
+      "updated_at": "2026-01-08T04:10:00Z"
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": "proj-sb-002",
+    "fields": {
+      "name": "South Brisbane Distribution Centre",
+      "location": "Logan, QLD",
+      "status": "active",
+      "start_date": "2025-09-15",
+      "end_date": "2027-03-30",
+      "description": "High-throughput automation upgrade to existing facility.",
+      "program_name": "Distribution Centres",
+      "phase": "Design + Procurement",
+      "created_at": "2025-08-02T11:30:00Z",
+      "updated_at": "2026-01-10T01:45:00Z"
+    }
+  },
+  {
+    "model": "core.budgetitem",
+    "pk": "bud-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "category": "Civil Works",
+      "description": "Earthworks, drainage, retaining walls",
+      "original_budget": "42000000",
+      "approved_variations": "1800000",
+      "forecast_cost": "44600000",
+      "actual_spent": "28700000",
+      "currency": "AUD",
+      "cost_code": "CW-100",
+      "status": "on_track",
+      "created_at": "2025-07-15T09:00:00Z",
+      "updated_at": "2026-01-06T03:20:00Z"
+    }
+  },
+  {
+    "model": "core.budgetitem",
+    "pk": "bud-002",
+    "fields": {
+      "project": "proj-nb-001",
+      "category": "Mechanical & Electrical",
+      "description": "Automation, conveyors, power upgrades",
+      "original_budget": "68000000",
+      "approved_variations": "6200000",
+      "forecast_cost": "74400000",
+      "actual_spent": "33100000",
+      "currency": "AUD",
+      "cost_code": "ME-210",
+      "status": "at_risk",
+      "created_at": "2025-07-20T12:30:00Z",
+      "updated_at": "2026-01-09T02:15:00Z"
+    }
+  },
+  {
+    "model": "core.budgetitem",
+    "pk": "bud-003",
+    "fields": {
+      "project": "proj-sb-002",
+      "category": "Fit-out",
+      "description": "Racking, cold storage, staff amenities",
+      "original_budget": "36000000",
+      "approved_variations": "900000",
+      "forecast_cost": "36900000",
+      "actual_spent": "21200000",
+      "currency": "AUD",
+      "cost_code": "FO-330",
+      "status": "on_track",
+      "created_at": "2025-09-22T10:15:00Z",
+      "updated_at": "2026-01-11T04:05:00Z"
+    }
+  },
+  {
+    "model": "core.milestone",
+    "pk": "ms-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "name": "Site mobilisation complete",
+      "description": "Site offices, fencing, and safety controls established.",
+      "planned_date": "2025-08-12",
+      "actual_date": "2025-08-10",
+      "status": "done",
+      "percent_complete": 100,
+      "created_at": "2025-07-10T09:00:00Z",
+      "updated_at": "2025-08-11T01:00:00Z"
+    }
+  },
+  {
+    "model": "core.milestone",
+    "pk": "ms-002",
+    "fields": {
+      "project": "proj-nb-001",
+      "name": "Structural steel erected",
+      "description": "Main warehouse frame and mezzanine complete.",
+      "planned_date": "2026-02-05",
+      "actual_date": null,
+      "status": "in_progress",
+      "percent_complete": 65,
+      "created_at": "2025-09-01T09:00:00Z",
+      "updated_at": "2026-01-12T02:35:00Z"
+    }
+  },
+  {
+    "model": "core.milestone",
+    "pk": "ms-003",
+    "fields": {
+      "project": "proj-sb-002",
+      "name": "Automation procurement",
+      "description": "Vendor selection and contract finalised.",
+      "planned_date": "2026-01-20",
+      "actual_date": null,
+      "status": "at_risk",
+      "percent_complete": 40,
+      "created_at": "2025-10-04T09:00:00Z",
+      "updated_at": "2026-01-14T00:40:00Z"
+    }
+  },
+  {
+    "model": "core.risk",
+    "pk": "risk-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "title": "Supply chain delays for steel",
+      "description": "Extended lead times could impact frame erection.",
+      "category": "Procurement",
+      "likelihood": 3,
+      "impact": 4,
+      "rating": 12,
+      "status": "mitigating",
+      "owner": "A. Collins",
+      "due_date": "2026-02-01",
+      "mitigation_plan": "Secure secondary supplier and expedite freight.",
+      "created_at": "2025-10-01T09:00:00Z",
+      "updated_at": "2026-01-09T03:15:00Z"
+    }
+  },
+  {
+    "model": "core.risk",
+    "pk": "risk-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "title": "Automation integration complexity",
+      "description": "Legacy systems may not align with new automation specs.",
+      "category": "Technical",
+      "likelihood": 4,
+      "impact": 4,
+      "rating": 16,
+      "status": "open",
+      "owner": "J. Ahmed",
+      "due_date": "2026-03-05",
+      "mitigation_plan": "Early vendor design workshops and integration testing.",
+      "created_at": "2025-11-12T09:00:00Z",
+      "updated_at": "2026-01-13T00:25:00Z"
+    }
+  },
+  {
+    "model": "core.rfi",
+    "pk": "rfi-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "rfi_number": "RFI-118",
+      "title": "Clarify roof insulation spec",
+      "question": "Confirm insulation rating for cold-chain roof assembly.",
+      "status": "open",
+      "raised_by": "D. Singh",
+      "raised_at": "2026-01-05T02:30:00Z",
+      "due_date": "2026-01-18",
+      "responded_at": null,
+      "response_summary": "Awaiting consultant response.",
+      "created_at": "2026-01-05T02:30:00Z",
+      "updated_at": "2026-01-05T02:30:00Z"
+    }
+  },
+  {
+    "model": "core.rfi",
+    "pk": "rfi-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "rfi_number": "RFI-204",
+      "title": "Automation mezzanine clearance",
+      "question": "Confirm clearance zone for mezzanine conveyor alignment.",
+      "status": "answered",
+      "raised_by": "L. Chen",
+      "raised_at": "2026-01-03T05:40:00Z",
+      "due_date": "2026-01-10",
+      "responded_at": "2026-01-07T01:15:00Z",
+      "response_summary": "Clearance confirmed at 5.2m.",
+      "created_at": "2026-01-03T05:40:00Z",
+      "updated_at": "2026-01-07T01:15:00Z"
+    }
+  },
+  {
+    "model": "core.document",
+    "pk": "doc-101",
+    "fields": {
+      "project": "proj-nb-001",
+      "doc_type": "plan",
+      "title": "Structural General Arrangement",
+      "description": "Primary frame layout and load specs.",
+      "file_url": "https://example.com/docs/structural-ga.pdf",
+      "version": "v3",
+      "status": "approved",
+      "uploaded_by": "S. Patel",
+      "uploaded_at": "2025-12-02T03:00:00Z",
+      "created_at": "2025-12-02T03:00:00Z",
+      "updated_at": "2025-12-10T02:10:00Z"
+    }
+  },
+  {
+    "model": "core.document",
+    "pk": "doc-204",
+    "fields": {
+      "project": "proj-sb-002",
+      "doc_type": "approval",
+      "title": "Fire Safety Compliance Letter",
+      "description": "Authority sign-off for revised layout.",
+      "file_url": "https://example.com/docs/fire-approval.pdf",
+      "version": "v1",
+      "status": "approved",
+      "uploaded_by": "L. Garcia",
+      "uploaded_at": "2026-01-08T08:40:00Z",
+      "created_at": "2026-01-08T08:40:00Z",
+      "updated_at": "2026-01-08T08:40:00Z"
+    }
+  },
+  {
+    "model": "core.document",
+    "pk": "doc-219",
+    "fields": {
+      "project": "proj-sb-002",
+      "doc_type": "report",
+      "title": "Monthly Progress Report - December",
+      "description": "Schedule, cost, and risk summary.",
+      "file_url": "https://example.com/docs/progress-dec.pdf",
+      "version": "v1",
+      "status": "draft",
+      "uploaded_by": "N. Brown",
+      "uploaded_at": "2026-01-05T01:10:00Z",
+      "created_at": "2026-01-05T01:10:00Z",
+      "updated_at": "2026-01-12T03:30:00Z"
+    }
+  },
+  {
+    "model": "core.mediaupdate",
+    "pk": "media-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "title": "North Brisbane - Slab pour complete",
+      "description": "Completion of slab pour for main warehouse footprint.",
+      "media_type": "photo",
+      "media_url": "http://localhost:5173/media/blueprint-1.svg",
+      "captured_at": "2026-01-06T03:10:00Z",
+      "uploaded_by": "K. Nguyen",
+      "created_at": "2026-01-06T03:10:00Z",
+      "updated_at": "2026-01-06T03:10:00Z"
+    }
+  },
+  {
+    "model": "core.mediaupdate",
+    "pk": "media-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "title": "South Brisbane - Automation area survey",
+      "description": "Survey complete ahead of equipment delivery.",
+      "media_type": "update",
+      "media_url": "http://localhost:5173/media/demolition-1.svg",
+      "captured_at": "2026-01-12T02:30:00Z",
+      "uploaded_by": "R. Lopez",
+      "created_at": "2026-01-12T02:30:00Z",
+      "updated_at": "2026-01-12T02:30:00Z"
+    }
+  },
+  {
+    "model": "core.mediaupdate",
+    "pk": "media-003",
+    "fields": {
+      "project": "proj-nb-001",
+      "title": "Live Camera Feed",
+      "description": "Placeholder for live site camera feed.",
+      "media_type": "camera_feed",
+      "media_url": "http://localhost:5173/media/blueprint-2.svg",
+      "captured_at": "2026-01-17T00:00:00Z",
+      "uploaded_by": "System",
+      "created_at": "2026-01-17T00:00:00Z",
+      "updated_at": "2026-01-17T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.approval",
+    "pk": "appr-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "entity_type": "document",
+      "entity_id": "doc-101",
+      "status": "approved",
+      "requested_by": "S. Patel",
+      "requested_at": "2025-12-01T02:30:00Z",
+      "reviewed_by": "E. Grant",
+      "reviewed_at": "2025-12-03T00:45:00Z",
+      "decision_note": "Approved per compliance checklist.",
+      "created_at": "2025-12-01T02:30:00Z",
+      "updated_at": "2025-12-03T00:45:00Z"
+    }
+  },
+  {
+    "model": "core.approval",
+    "pk": "appr-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "entity_type": "budget_item",
+      "entity_id": "bud-003",
+      "status": "pending",
+      "requested_by": "N. Brown",
+      "requested_at": "2026-01-09T01:15:00Z",
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "decision_note": "Variation request for fit-out scope.",
+      "created_at": "2026-01-09T01:15:00Z",
+      "updated_at": "2026-01-09T01:15:00Z"
+    }
+  },
+  {
+    "model": "core.activitylog",
+    "pk": "act-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "actor": "S. Patel",
+      "action": "submit",
+      "entity_type": "document",
+      "entity_id": "doc-101",
+      "metadata": {"title": "Structural GA v3"},
+      "created_at": "2026-01-12T02:05:00Z",
+      "updated_at": "2026-01-12T02:05:00Z"
+    }
+  },
+  {
+    "model": "core.activitylog",
+    "pk": "act-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "actor": "E. Grant",
+      "action": "approve",
+      "entity_type": "approval",
+      "entity_id": "appr-001",
+      "metadata": {"decision": "Approved", "note": "Compliance complete"},
+      "created_at": "2026-01-10T05:40:00Z",
+      "updated_at": "2026-01-10T05:40:00Z"
+    }
+  },
+  {
+    "model": "core.activitylog",
+    "pk": "act-003",
+    "fields": {
+      "project": "proj-nb-001",
+      "actor": "T. Wong",
+      "action": "update",
+      "entity_type": "milestone",
+      "entity_id": "ms-002",
+      "metadata": {"percent_complete": 65},
+      "created_at": "2026-01-09T00:10:00Z",
+      "updated_at": "2026-01-09T00:10:00Z"
+    }
+  }
+]
