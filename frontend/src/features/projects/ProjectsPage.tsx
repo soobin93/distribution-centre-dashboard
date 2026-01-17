@@ -1,8 +1,25 @@
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import Badge from '../../components/Badge'
-import { projects } from './mock'
+import { getProjects } from '../../api/program'
+import { projects as fallbackProjects } from './mock'
+import type { Project } from './types'
 
 const ProjectsPage = () => {
+  const [projectList, setProjectList] = useState<Project[]>(fallbackProjects)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getProjects()
+        setProjectList(data)
+      } catch (error) {
+        console.warn('Falling back to mock data', error)
+      }
+    }
+    load()
+  }, [])
+
   return (
     <section className="page">
       <div className="page__header">
@@ -20,7 +37,7 @@ const ProjectsPage = () => {
           <span className="section__meta">2 active projects</span>
         </div>
         <div className="grid grid--cards">
-          {projects.map((project) => (
+          {projectList.map((project) => (
             <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
               <div className="card card--light">
                 <div className="card__header">

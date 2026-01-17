@@ -10,6 +10,7 @@ export const projects: Project[] = [
     end_date: '2026-12-15',
     description: 'Greenfield distribution hub with cold-chain capability.',
     program_name: 'Distribution Centres',
+    phase: 'Construction',
     created_at: '2025-06-12T09:00:00Z',
     updated_at: '2026-01-08T04:10:00Z',
   },
@@ -22,16 +23,18 @@ export const projects: Project[] = [
     end_date: '2027-03-30',
     description: 'High-throughput automation upgrade to existing facility.',
     program_name: 'Distribution Centres',
+    phase: 'Design + Procurement',
     created_at: '2025-08-02T11:30:00Z',
     updated_at: '2026-01-10T01:45:00Z',
   },
 ]
 
 export const programSummary = {
-  total_original_budget: '$312.0M',
-  total_forecast_cost: '$328.6M',
-  total_actual_spend: '$141.2M',
-  milestones_completed: '18 / 34',
-  open_risks: '7',
-  pending_approvals: '4',
+  total_original_budget: 312000000,
+  total_variations: 16600000,
+  total_forecast_cost: 328600000,
+  total_actual_spend: 141200000,
+  milestones_completed: { completed: 18, total: 34 },
+  open_risks: 7,
+  pending_approvals: 4,
 }

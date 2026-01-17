@@ -1,22 +1,33 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Badge from '../../components/Badge'
 import StatCard from '../../components/StatCard'
-import { budgetItems } from '../budgets/mock'
-import { milestones } from '../milestones/mock'
-import { risks } from '../risks/mock'
-import { rfis } from '../rfis/mock'
-import { documents } from '../documents/mock'
-import { mediaUpdates } from '../media_updates/mock'
-import { approvals } from '../approvals/mock'
-import { activityLogs } from '../activity/mock'
-import { projects } from './mock'
+import { getActivityLogs, getApprovals, getBudgets, getDocuments, getMediaUpdates, getMilestones, getProjects, getRfis, getRisks } from '../../api/program'
+import { activityLogs as fallbackActivity } from '../activity/mock'
+import { approvals as fallbackApprovals } from '../approvals/mock'
+import { budgetItems as fallbackBudgets } from '../budgets/mock'
+import { documents as fallbackDocuments } from '../documents/mock'
+import { mediaUpdates as fallbackMedia } from '../media_updates/mock'
+import { milestones as fallbackMilestones } from '../milestones/mock'
+import { rfis as fallbackRfis } from '../rfis/mock'
+import { risks as fallbackRisks } from '../risks/mock'
+import { projects as fallbackProjects } from './mock'
+import type { ActivityLog } from '../activity/types'
+import type { Approval } from '../approvals/types'
+import type { BudgetItem } from '../budgets/types'
+import type { Document } from '../documents/types'
+import type { MediaUpdate } from '../media_updates/types'
+import type { Milestone } from '../milestones/types'
+import type { Project } from './types'
+import type { Rfi } from '../rfis/types'
+import type { Risk } from '../risks/types'
 
-const formatCurrency = (value: number, currency: string) =>
+const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(value)
+  }).format(Number(value))
 
 const budgetStatusTone = (status: string) => {
   if (status === 'on_track') return 'success'
@@ -50,6 +61,57 @@ const mediaTone = (type: string) => {
 
 const ProjectWorkspacePage = () => {
   const { projectId } = useParams()
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects)
+  const [budgets, setBudgets] = useState<BudgetItem[]>(fallbackBudgets)
+  const [milestoneItems, setMilestoneItems] = useState<Milestone[]>(fallbackMilestones)
+  const [riskItems, setRiskItems] = useState<Risk[]>(fallbackRisks)
+  const [rfiItems, setRfiItems] = useState<Rfi[]>(fallbackRfis)
+  const [documentItems, setDocumentItems] = useState<Document[]>(fallbackDocuments)
+  const [mediaItems, setMediaItems] = useState<MediaUpdate[]>(fallbackMedia)
+  const [approvalItems, setApprovalItems] = useState<Approval[]>(fallbackApprovals)
+  const [activityItems, setActivityItems] = useState<ActivityLog[]>(fallbackActivity)
+
+  useEffect(() => {
+    if (!projectId) return
+    const load = async () => {
+      try {
+        const [
+          projectData,
+          budgetsData,
+          milestonesData,
+          risksData,
+          rfisData,
+          documentsData,
+          mediaData,
+          approvalsData,
+          activityData,
+        ] = await Promise.all([
+          getProjects(),
+          getBudgets(projectId),
+          getMilestones(projectId),
+          getRisks(projectId),
+          getRfis(projectId),
+          getDocuments(projectId),
+          getMediaUpdates(projectId),
+          getApprovals(projectId),
+          getActivityLogs(projectId),
+        ])
+        setProjects(projectData)
+        setBudgets(budgetsData)
+        setMilestoneItems(milestonesData)
+        setRiskItems(risksData)
+        setRfiItems(rfisData)
+        setDocumentItems(documentsData)
+        setMediaItems(mediaData)
+        setApprovalItems(approvalsData)
+        setActivityItems(activityData)
+      } catch (error) {
+        console.warn('Falling back to mock data', error)
+      }
+    }
+    load()
+  }, [projectId])
+
   const project = projects.find((item) => item.id === projectId)
 
   if (!project) {
@@ -65,21 +127,45 @@ const ProjectWorkspacePage = () => {
     )
   }
 
-  const projectBudgets = budgetItems.filter((item) => item.project_id === project.id)
-  const projectMilestones = milestones.filter((item) => item.project_id === project.id)
-  const projectRisks = risks.filter((item) => item.project_id === project.id)
-  const projectRfis = rfis.filter((item) => item.project_id === project.id)
-  const projectDocuments = documents.filter((item) => item.project_id === project.id)
-  const projectMedia = mediaUpdates.filter((item) => item.project_id === project.id)
-  const projectApprovals = approvals.filter((item) => item.project_id === project.id)
-  const projectActivity = activityLogs.filter((item) => item.project_id === project.id)
+  const projectBudgets = useMemo(
+    () => budgets.filter((item) => item.project_id === project.id),
+    [budgets, project.id],
+  )
+  const projectMilestones = useMemo(
+    () => milestoneItems.filter((item) => item.project_id === project.id),
+    [milestoneItems, project.id],
+  )
+  const projectRisks = useMemo(
+    () => riskItems.filter((item) => item.project_id === project.id),
+    [riskItems, project.id],
+  )
+  const projectRfis = useMemo(
+    () => rfiItems.filter((item) => item.project_id === project.id),
+    [rfiItems, project.id],
+  )
+  const projectDocuments = useMemo(
+    () => documentItems.filter((item) => item.project_id === project.id),
+    [documentItems, project.id],
+  )
+  const projectMedia = useMemo(
+    () => mediaItems.filter((item) => item.project_id === project.id),
+    [mediaItems, project.id],
+  )
+  const projectApprovals = useMemo(
+    () => approvalItems.filter((item) => item.project_id === project.id),
+    [approvalItems, project.id],
+  )
+  const projectActivity = useMemo(
+    () => activityItems.filter((item) => item.project_id === project.id),
+    [activityItems, project.id],
+  )
 
   const budgetTotals = projectBudgets.reduce(
     (acc, item) => {
-      acc.original += item.original_budget
-      acc.variations += item.approved_variations
-      acc.forecast += item.forecast_cost
-      acc.actual += item.actual_spent
+      acc.original += Number(item.original_budget)
+      acc.variations += Number(item.approved_variations)
+      acc.forecast += Number(item.forecast_cost)
+      acc.actual += Number(item.actual_spent)
       return acc
     },
     { original: 0, variations: 0, forecast: 0, actual: 0 },
@@ -100,7 +186,7 @@ const ProjectWorkspacePage = () => {
         </div>
         <div className="workspace__meta">
           <Badge label={project.status.replace('_', ' ')} tone="info" />
-          <span>{project.phase}</span>
+          <span>{project.phase ?? 'Phase TBD'}</span>
           <span>Target: {project.end_date}</span>
         </div>
       </div>

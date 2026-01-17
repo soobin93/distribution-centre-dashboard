@@ -9,6 +9,20 @@ export type Project = {
   end_date: string
   description: string
   program_name: string
+  phase?: string
   created_at: string
   updated_at: string
+}
+
+export type ProgramSummary = {
+  total_original_budget: number
+  total_variations: number
+  total_forecast_cost: number
+  total_actual_spend: number
+  milestones_completed: {
+    completed: number
+    total: number
+  }
+  open_risks: number
+  pending_approvals: number
 }
