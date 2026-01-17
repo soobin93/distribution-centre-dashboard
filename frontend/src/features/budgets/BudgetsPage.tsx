@@ -1,12 +1,13 @@
 import Badge from '../../components/Badge'
-import { budgetItems } from './mock'
+import Spinner from '../../components/Spinner'
+import { useBudgets } from '../../api/queries'
 
-const formatCurrency = (value: number, currency: string) =>
+const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(value)
+  }).format(Number(value))
 
 const statusTone = (status: string) => {
   if (status === 'on_track') return 'success'
@@ -15,6 +16,36 @@ const statusTone = (status: string) => {
 }
 
 const BudgetsPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useBudgets()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Budget Tracking</h1>
+            <p className="page__subtitle">Loading budget data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading budgets" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Budget Tracking</h1>
+            <p className="page__subtitle">Budget data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -35,7 +66,7 @@ const BudgetsPage = () => {
           <span>Actual</span>
           <span>Status</span>
         </div>
-        {budgetItems.map((item) => (
+        {items.map((item) => (
           <div className="table__row" key={item.id}>
             <div>
               <strong>{item.category}</strong>

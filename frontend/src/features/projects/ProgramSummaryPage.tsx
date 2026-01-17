@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import StatCard from '../../components/StatCard'
 import Badge from '../../components/Badge'
 import { BarChart, DonutChart } from '../../components/Charts'
-import { getProgramSummary, getProjects } from '../../api/program'
-import { programSummary as fallbackSummary, projects as fallbackProjects } from './mock'
-import type { ProgramSummary, Project } from './types'
+import Spinner from '../../components/Spinner'
+import { useProgramSummary, useProjects } from '../../api/queries'
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-AU', {
@@ -15,24 +13,30 @@ const formatCurrency = (value: number) =>
   }).format(value)
 
 const ProgramSummaryPage = () => {
-  const [summary, setSummary] = useState<ProgramSummary>(fallbackSummary)
-  const [projectList, setProjectList] = useState<Project[]>(fallbackProjects)
+  const {
+    data: summary,
+    isLoading: loadingSummary,
+    isError: summaryError,
+  } = useProgramSummary()
+  const {
+    data: projectList = [],
+    isLoading: loadingProjects,
+    isError: projectsError,
+  } = useProjects()
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const [summaryData, projectsData] = await Promise.all([
-          getProgramSummary(),
-          getProjects(),
-        ])
-        setSummary(summaryData)
-        setProjectList(projectsData)
-      } catch (error) {
-        console.warn('Falling back to mock data', error)
-      }
-    }
-    load()
-  }, [])
+  if ((loadingSummary && loadingProjects) || (!summary && loadingSummary)) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Program Summary</h1>
+            <p className="page__subtitle">Loading program insights.</p>
+          </div>
+        </div>
+        <Spinner label="Loading summary" />
+      </section>
+    )
+  }
 
   return (
     <section className="page">
@@ -49,38 +53,45 @@ const ProgramSummaryPage = () => {
         </div>
       </div>
 
-      <div className="grid grid--stats">
-        <StatCard
-          label="Total Budget"
-          value={formatCurrency(summary.total_original_budget)}
-          helper="Approved baseline"
-        />
-        <StatCard
-          label="Forecast"
-          value={formatCurrency(summary.total_forecast_cost)}
-          helper="Incl. variations"
-        />
-        <StatCard
-          label="Actuals"
-          value={formatCurrency(summary.total_actual_spend)}
-          helper="To date"
-        />
-        <StatCard
-          label="Milestones"
-          value={`${summary.milestones_completed.completed}/${summary.milestones_completed.total}`}
-          helper="Completed"
-        />
-        <StatCard label="Open Risks" value={`${summary.open_risks}`} helper="High + medium" />
-        <StatCard label="Pending Approvals" value={`${summary.pending_approvals}`} helper="Awaiting sign-off" />
-      </div>
+      {summary ? (
+        <div className="grid grid--stats">
+          <StatCard
+            label="Total Budget"
+            value={formatCurrency(summary.total_original_budget)}
+            helper="Approved baseline"
+          />
+          <StatCard
+            label="Forecast"
+            value={formatCurrency(summary.total_forecast_cost)}
+            helper="Incl. variations"
+          />
+          <StatCard
+            label="Actuals"
+            value={formatCurrency(summary.total_actual_spend)}
+            helper="To date"
+          />
+          <StatCard
+            label="Milestones"
+            value={`${summary.milestones_completed.completed}/${summary.milestones_completed.total}`}
+            helper="Completed"
+          />
+          <StatCard label="Open Risks" value={`${summary.open_risks}`} helper="High + medium" />
+          <StatCard label="Pending Approvals" value={`${summary.pending_approvals}`} helper="Awaiting sign-off" />
+        </div>
+      ) : (
+        <div className="notice">Program totals are temporarily unavailable.</div>
+      )}
 
       <div className="section">
         <div className="section__header">
           <h2>Project Health Snapshot</h2>
           <span className="section__meta">2 workspaces</span>
         </div>
-        <div className="grid grid--cards">
-          {projectList.map((project) => (
+        {projectsError ? (
+          <div className="notice">Project list is unavailable. Please retry.</div>
+        ) : (
+          <div className="grid grid--cards">
+            {projectList.map((project) => (
             <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
               <div className="card card--light">
                 <div className="card__header">
@@ -107,8 +118,9 @@ const ProgramSummaryPage = () => {
                 </div>
               </div>
             </NavLink>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="section">
@@ -116,36 +128,40 @@ const ProgramSummaryPage = () => {
           <h2>Program Insights</h2>
           <span className="section__meta">Executive view</span>
         </div>
-        <div className="grid grid--split">
-          <div className="card card--light">
-            <h3>Budget mix</h3>
-            <p className="card__body">Approved baseline vs variations across the program.</p>
-            <BarChart
-              items={[
-                { label: 'Baseline', value: summary.total_original_budget, color: '#5672ff' },
-                { label: 'Variations', value: summary.total_variations, color: '#9d7bff' },
-              ]}
-            />
+        {summary ? (
+          <div className="grid grid--split">
+            <div className="card card--light">
+              <h3>Budget mix</h3>
+              <p className="card__body">Approved baseline vs variations across the program.</p>
+              <BarChart
+                items={[
+                  { label: 'Baseline', value: summary.total_original_budget, color: '#5672ff' },
+                  { label: 'Variations', value: summary.total_variations, color: '#9d7bff' },
+                ]}
+              />
+            </div>
+            <div className="card card--light">
+              <h3>Spend vs forecast</h3>
+              <p className="card__body">Actuals tracked against current forecast.</p>
+              <DonutChart
+                value={summary.total_actual_spend}
+                total={summary.total_forecast_cost}
+                label="Actuals"
+              />
+            </div>
+            <div className="card card--light">
+              <h3>Milestones completed</h3>
+              <p className="card__body">Overall completion across both distribution centres.</p>
+              <DonutChart
+                value={summary.milestones_completed.completed}
+                total={summary.milestones_completed.total}
+                label="Complete"
+              />
+            </div>
           </div>
-          <div className="card card--light">
-            <h3>Spend vs forecast</h3>
-            <p className="card__body">Actuals tracked against current forecast.</p>
-            <DonutChart
-              value={summary.total_actual_spend}
-              total={summary.total_forecast_cost}
-              label="Actuals"
-            />
-          </div>
-          <div className="card card--light">
-            <h3>Milestones completed</h3>
-            <p className="card__body">Overall completion across both distribution centres.</p>
-            <DonutChart
-              value={summary.milestones_completed.completed}
-              total={summary.milestones_completed.total}
-              label="Complete"
-            />
-          </div>
-        </div>
+        ) : (
+          <div className="empty">Charts will appear once summary data loads.</div>
+        )}
       </div>
 
       <div className="section">

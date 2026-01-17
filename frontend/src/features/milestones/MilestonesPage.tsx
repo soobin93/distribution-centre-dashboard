@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { milestones } from './mock'
+import Spinner from '../../components/Spinner'
+import { useMilestones } from '../../api/queries'
 
 const statusTone = (status: string) => {
   if (status === 'done') return 'success'
@@ -9,6 +10,36 @@ const statusTone = (status: string) => {
 }
 
 const MilestonesPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useMilestones()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Timeline & Milestones</h1>
+            <p className="page__subtitle">Loading milestone data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading milestones" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Timeline & Milestones</h1>
+            <p className="page__subtitle">Milestone data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -21,7 +52,7 @@ const MilestonesPage = () => {
       </div>
 
       <div className="timeline">
-        {milestones.map((milestone) => (
+        {items.map((milestone) => (
           <div className="timeline__item" key={milestone.id}>
             <div className="timeline__marker" />
             <div className="timeline__content">

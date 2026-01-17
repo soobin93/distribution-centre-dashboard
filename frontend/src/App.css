@@ -95,6 +95,21 @@
   color: rgba(226, 232, 240, 0.8);
 }
 
+.sidebar__loading {
+  padding: 8px 12px;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.sidebar__button {
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2a1860;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .status__dot {
   width: 8px;
   height: 8px;
@@ -115,6 +130,26 @@
   flex-direction: column;
   gap: 8px;
   padding: 24px clamp(20px, 3vw, 32px) 12px;
+}
+
+.sidebar-toggle {
+  display: none;
+  align-self: flex-start;
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+  color: var(--slate-700);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.sidebar__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  border: none;
+  z-index: 20;
 }
 
 .topbar__eyebrow {
@@ -419,6 +454,35 @@
   font-size: 13px;
 }
 
+.notice {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 12px;
+}
+
+.empty {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--slate-200);
+  color: var(--slate-500);
+  font-size: 13px;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--slate-500);
+}
+
+.auth-shell .spinner {
+  justify-content: center;
+}
+
 .media-card {
   border-radius: 20px;
   border: 1px solid rgba(226, 232, 240, 0.9);
@@ -471,18 +535,39 @@
   }
 
   .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(320px, 85vw);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 30;
+    padding: 28px 20px;
+    overflow-y: auto;
+  }
+
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebar__section,
+  .sidebar__footer {
+    width: 100%;
+  }
+
+  .sidebar__nav {
+    flex-direction: column;
   }
 
   .sidebar__footer {
     width: 100%;
+  }
+
+  .sidebar__overlay {
+    display: block;
+  }
+
+  .sidebar-toggle {
+    display: inline-flex;
   }
 
   .content__topbar {
@@ -499,6 +584,10 @@
 }
 
 @media (max-width: 720px) {
+  .sidebar {
+    padding: 20px 16px;
+  }
+
   .content__topbar {
     padding: 18px;
   }

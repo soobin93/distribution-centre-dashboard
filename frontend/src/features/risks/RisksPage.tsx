@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { risks } from './mock'
+import Spinner from '../../components/Spinner'
+import { useRisks } from '../../api/queries'
 
 const ratingTone = (rating: number) => {
   if (rating >= 16) return 'danger'
@@ -8,6 +9,36 @@ const ratingTone = (rating: number) => {
 }
 
 const RisksPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useRisks()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Risk Register</h1>
+            <p className="page__subtitle">Loading risk data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading risks" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Risk Register</h1>
+            <p className="page__subtitle">Risk data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -28,7 +59,7 @@ const RisksPage = () => {
           <span>Status</span>
           <span>Mitigation</span>
         </div>
-        {risks.map((risk) => (
+        {items.map((risk) => (
           <div className="table__row" key={risk.id}>
             <div>
               <strong>{risk.title}</strong>

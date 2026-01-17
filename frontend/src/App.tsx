@@ -1,17 +1,48 @@
-import { NavLink, Route, Routes } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import ProgramSummaryPage from "./features/projects/ProgramSummaryPage";
 import ProjectWorkspacePage from "./features/projects/ProjectWorkspacePage";
 import ProjectsPage from "./features/projects/ProjectsPage";
-import { projects } from "./features/projects/mock";
+import RequireAuth from "./auth/RequireAuth";
+import LoginPage from "./pages/LoginPage";
+import { useProjects } from "./api/queries";
+import { useAuth } from "./auth/AuthContext";
+import Spinner from "./components/Spinner";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `nav-pill${isActive ? " is-active" : ""}`;
 
 const AppLayout = () => {
+  const location = useLocation();
+  const { logout, user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {
+    data: workspaceProjects = [],
+    isLoading: loadingWorkspaces,
+    isError: workspacesError,
+  } = useProjects();
+  if (location.pathname === "/login") {
+    return <LoginPage />;
+  }
+
+  const handleNavClick = () => {
+    if (window.innerWidth <= 1100) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {sidebarOpen ? (
+        <button
+          className="sidebar__overlay"
+          type="button"
+          aria-label="Close navigation"
+          onClick={() => setSidebarOpen(false)}
+        />
+      ) : null}
+      <aside className={`sidebar${sidebarOpen ? " is-open" : ""}`}>
         <div className="sidebar__brand">
           <div className="brand__title">Distribution Centres</div>
           <div className="brand__subtitle">Capital Infrastructure Program</div>
@@ -20,10 +51,10 @@ const AppLayout = () => {
         <div className="sidebar__section">
           <div className="sidebar__label">Program</div>
           <nav className="sidebar__nav">
-            <NavLink to="/" className={navLinkClass} end>
+            <NavLink to="/" className={navLinkClass} end onClick={handleNavClick}>
               Program summary
             </NavLink>
-            <NavLink to="/projects" className={navLinkClass}>
+            <NavLink to="/projects" className={navLinkClass} onClick={handleNavClick}>
               Project workspaces
             </NavLink>
           </nav>
@@ -32,24 +63,48 @@ const AppLayout = () => {
         <div className="sidebar__section">
           <div className="sidebar__label">Workspaces</div>
           <nav className="sidebar__nav">
-            {projects.map((project) => (
-              <NavLink key={project.id} to={`/projects/${project.id}`} className={navLinkClass}>
-                {project.name}
-              </NavLink>
-            ))}
+            {loadingWorkspaces ? (
+              <div className="sidebar__loading">
+                <Spinner label="Loading workspaces" />
+              </div>
+            ) : workspacesError ? (
+              <div className="sidebar__loading">Unable to load workspaces.</div>
+            ) : (
+              workspaceProjects.map((project) => (
+                <NavLink
+                  key={project.id}
+                  to={`/projects/${project.id}`}
+                  className={navLinkClass}
+                  onClick={handleNavClick}
+                >
+                  {project.name}
+                </NavLink>
+              ))
+            )}
           </nav>
         </div>
 
         <div className="sidebar__footer">
           <div className="sidebar__status">
             <span className="status__dot" />
-            <span>Governance cycle: Q1 2026</span>
+            <span>{user ? `Signed in as ${user.username}` : "Signed in"}</span>
           </div>
+          <button className="sidebar__button" type="button" onClick={logout}>
+            Sign out
+          </button>
         </div>
       </aside>
 
       <div className="content">
         <header className="content__topbar">
+          <button
+            className="sidebar-toggle"
+            type="button"
+            aria-label="Open navigation"
+            onClick={() => setSidebarOpen(true)}
+          >
+            ☰
+          </button>
           <span className="topbar__eyebrow">Portfolio command centre</span>
           <h1 className="topbar__title">Distribution Centres Program</h1>
           <p className="topbar__subtitle">
@@ -59,10 +114,38 @@ const AppLayout = () => {
 
         <main className="main">
           <Routes>
-            <Route index element={<ProgramSummaryPage />} />
-            <Route path="summary" element={<ProgramSummaryPage />} />
-            <Route path="projects" element={<ProjectsPage />} />
-            <Route path="projects/:projectId" element={<ProjectWorkspacePage />} />
+            <Route
+              path="/"
+              element={
+                <RequireAuth>
+                  <ProgramSummaryPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/summary"
+              element={
+                <RequireAuth>
+                  <ProgramSummaryPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <RequireAuth>
+                  <ProjectsPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/projects/:projectId"
+              element={
+                <RequireAuth>
+                  <ProjectWorkspacePage />
+                </RequireAuth>
+              }
+            />
             <Route
               path="*"
               element={

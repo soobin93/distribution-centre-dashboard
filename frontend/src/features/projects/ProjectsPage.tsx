@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import Badge from '../../components/Badge'
-import { getProjects } from '../../api/program'
-import { projects as fallbackProjects } from './mock'
-import type { Project } from './types'
+import Spinner from '../../components/Spinner'
+import { useProjects } from '../../api/queries'
 
 const ProjectsPage = () => {
-  const [projectList, setProjectList] = useState<Project[]>(fallbackProjects)
+  const { data: projectList = [], isLoading: loading, isError } = useProjects()
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await getProjects()
-        setProjectList(data)
-      } catch (error) {
-        console.warn('Falling back to mock data', error)
-      }
-    }
-    load()
-  }, [])
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Project Workspaces</h1>
+            <p className="page__subtitle">Loading workspace details.</p>
+          </div>
+        </div>
+        <Spinner label="Loading workspaces" />
+      </section>
+    )
+  }
 
   return (
     <section className="page">
@@ -36,36 +36,40 @@ const ProjectsPage = () => {
           <h2>Active workspaces</h2>
           <span className="section__meta">2 active projects</span>
         </div>
-        <div className="grid grid--cards">
-          {projectList.map((project) => (
-            <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
-              <div className="card card--light">
-                <div className="card__header">
-                  <div>
-                    <h3>{project.name}</h3>
-                    <p className="card__subtle">{project.location}</p>
+        {isError ? (
+          <div className="notice">Workspaces could not be loaded. Please retry.</div>
+        ) : (
+          <div className="grid grid--cards">
+            {projectList.map((project) => (
+              <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
+                <div className="card card--light">
+                  <div className="card__header">
+                    <div>
+                      <h3>{project.name}</h3>
+                      <p className="card__subtle">{project.location}</p>
+                    </div>
+                    <Badge label={project.status.replace('_', ' ')} tone="info" />
                   </div>
-                  <Badge label={project.status.replace('_', ' ')} tone="info" />
+                  <p className="card__body">{project.description}</p>
+                  <div className="card__footer">
+                    <div>
+                      <span className="label">Start</span>
+                      <span>{project.start_date}</span>
+                    </div>
+                    <div>
+                      <span className="label">Target</span>
+                      <span>{project.end_date}</span>
+                    </div>
+                    <div>
+                      <span className="label">Program</span>
+                      <span>{project.program_name}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="card__body">{project.description}</p>
-                <div className="card__footer">
-                  <div>
-                    <span className="label">Start</span>
-                    <span>{project.start_date}</span>
-                  </div>
-                  <div>
-                    <span className="label">Target</span>
-                    <span>{project.end_date}</span>
-                  </div>
-                  <div>
-                    <span className="label">Program</span>
-                    <span>{project.program_name}</span>
-                  </div>
-                </div>
-              </div>
-            </NavLink>
-          ))}
-        </div>
+              </NavLink>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

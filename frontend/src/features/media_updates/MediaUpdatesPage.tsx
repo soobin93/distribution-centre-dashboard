@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { mediaUpdates } from './mock'
+import Spinner from '../../components/Spinner'
+import { useMediaUpdates } from '../../api/queries'
 
 const mediaTone = (type: string) => {
   if (type === 'camera_feed') return 'info'
@@ -8,6 +9,36 @@ const mediaTone = (type: string) => {
 }
 
 const MediaUpdatesPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useMediaUpdates()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Media Updates</h1>
+            <p className="page__subtitle">Loading media updates.</p>
+          </div>
+        </div>
+        <Spinner label="Loading media" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Media Updates</h1>
+            <p className="page__subtitle">Media data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -20,7 +51,7 @@ const MediaUpdatesPage = () => {
       </div>
 
       <div className="grid grid--media">
-        {mediaUpdates.map((item) => (
+        {items.map((item) => (
           <div className="media-card" key={item.id}>
             <div className="media-card__image">
               <img src={item.media_url} alt={item.title} />

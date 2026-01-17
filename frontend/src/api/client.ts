@@ -11,7 +11,10 @@ const ensureTrailingSlash = (path: string) => {
 }
 
 export const fetchJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
-  const response = await fetch(`${API_BASE_URL}/${ensureTrailingSlash(path)}`, init)
+  const response = await fetch(`${API_BASE_URL}/${ensureTrailingSlash(path)}`, {
+    credentials: 'include',
+    ...init,
+  })
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status}`)
   }

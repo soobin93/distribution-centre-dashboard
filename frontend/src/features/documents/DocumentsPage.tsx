@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { documents } from './mock'
+import Spinner from '../../components/Spinner'
+import { useDocuments } from '../../api/queries'
 
 const statusTone = (status: string) => {
   if (status === 'approved') return 'success'
@@ -8,6 +9,36 @@ const statusTone = (status: string) => {
 }
 
 const DocumentsPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useDocuments()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Documents Repository</h1>
+            <p className="page__subtitle">Loading documents.</p>
+          </div>
+        </div>
+        <Spinner label="Loading documents" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Documents Repository</h1>
+            <p className="page__subtitle">Document data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -27,7 +58,7 @@ const DocumentsPage = () => {
           <span>Status</span>
           <span>Uploaded</span>
         </div>
-        {documents.map((doc) => (
+        {items.map((doc) => (
           <div className="table__row" key={doc.id}>
             <div>
               <strong>{doc.title}</strong>

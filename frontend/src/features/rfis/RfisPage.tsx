@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { rfis } from './mock'
+import Spinner from '../../components/Spinner'
+import { useRfis } from '../../api/queries'
 
 const statusTone = (status: string) => {
   if (status === 'answered') return 'success'
@@ -8,6 +9,36 @@ const statusTone = (status: string) => {
 }
 
 const RfisPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useRfis()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>RFIs</h1>
+            <p className="page__subtitle">Loading request data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading RFIs" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>RFIs</h1>
+            <p className="page__subtitle">RFI data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -28,7 +59,7 @@ const RfisPage = () => {
           <span>Status</span>
           <span>Response</span>
         </div>
-        {rfis.map((rfi) => (
+        {items.map((rfi) => (
           <div className="table__row" key={rfi.id}>
             <div>
               <strong>{rfi.rfi_number}</strong>

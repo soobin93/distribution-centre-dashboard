@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { approvals } from './mock'
+import Spinner from '../../components/Spinner'
+import { useApprovals } from '../../api/queries'
 
 const statusTone = (status: string) => {
   if (status === 'approved') return 'success'
@@ -8,6 +9,36 @@ const statusTone = (status: string) => {
 }
 
 const ApprovalsPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useApprovals()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Approvals Workflow</h1>
+            <p className="page__subtitle">Loading approvals.</p>
+          </div>
+        </div>
+        <Spinner label="Loading approvals" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Approvals Workflow</h1>
+            <p className="page__subtitle">Approval data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -28,7 +59,7 @@ const ApprovalsPage = () => {
           <span>Status</span>
           <span>Decision</span>
         </div>
-        {approvals.map((approval) => (
+        {items.map((approval) => (
           <div className="table__row" key={approval.id}>
             <div>
               <strong>{approval.entity_type}</strong>

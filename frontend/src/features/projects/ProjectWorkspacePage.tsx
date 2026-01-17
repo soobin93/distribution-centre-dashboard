@@ -1,26 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import Badge from '../../components/Badge'
 import StatCard from '../../components/StatCard'
-import { getActivityLogs, getApprovals, getBudgets, getDocuments, getMediaUpdates, getMilestones, getProjects, getRfis, getRisks } from '../../api/program'
-import { activityLogs as fallbackActivity } from '../activity/mock'
-import { approvals as fallbackApprovals } from '../approvals/mock'
-import { budgetItems as fallbackBudgets } from '../budgets/mock'
-import { documents as fallbackDocuments } from '../documents/mock'
-import { mediaUpdates as fallbackMedia } from '../media_updates/mock'
-import { milestones as fallbackMilestones } from '../milestones/mock'
-import { rfis as fallbackRfis } from '../rfis/mock'
-import { risks as fallbackRisks } from '../risks/mock'
-import { projects as fallbackProjects } from './mock'
-import type { ActivityLog } from '../activity/types'
-import type { Approval } from '../approvals/types'
-import type { BudgetItem } from '../budgets/types'
-import type { Document } from '../documents/types'
-import type { MediaUpdate } from '../media_updates/types'
-import type { Milestone } from '../milestones/types'
+import Spinner from '../../components/Spinner'
+import {
+  useActivityLogs,
+  useApprovals,
+  useBudgets,
+  useDocuments,
+  useMediaUpdates,
+  useMilestones,
+  useProjects,
+  useRfis,
+  useRisks,
+} from '../../api/queries'
 import type { Project } from './types'
-import type { Rfi } from '../rfis/types'
-import type { Risk } from '../risks/types'
 
 const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {
@@ -59,60 +53,99 @@ const mediaTone = (type: string) => {
   return 'neutral'
 }
 
+const formatDate = (value?: string | null) => {
+  if (!value) return '—'
+  const [date] = value.split('T')
+  return date ?? '—'
+}
+
+const resolveProjectId = (item: { project_id?: string; project?: string }) =>
+  item.project_id ?? item.project ?? ''
+
 const ProjectWorkspacePage = () => {
   const { projectId } = useParams()
-  const [projects, setProjects] = useState<Project[]>(fallbackProjects)
-  const [budgets, setBudgets] = useState<BudgetItem[]>(fallbackBudgets)
-  const [milestoneItems, setMilestoneItems] = useState<Milestone[]>(fallbackMilestones)
-  const [riskItems, setRiskItems] = useState<Risk[]>(fallbackRisks)
-  const [rfiItems, setRfiItems] = useState<Rfi[]>(fallbackRfis)
-  const [documentItems, setDocumentItems] = useState<Document[]>(fallbackDocuments)
-  const [mediaItems, setMediaItems] = useState<MediaUpdate[]>(fallbackMedia)
-  const [approvalItems, setApprovalItems] = useState<Approval[]>(fallbackApprovals)
-  const [activityItems, setActivityItems] = useState<ActivityLog[]>(fallbackActivity)
+  const { data: projects = [], isLoading: loadingProjects, isError: projectsError } = useProjects()
+  const { data: budgets = [], isLoading: loadingBudgets, isError: budgetsError } = useBudgets(projectId)
+  const { data: milestoneItems = [], isLoading: loadingMilestones, isError: milestonesError } = useMilestones(projectId)
+  const { data: riskItems = [], isLoading: loadingRisks, isError: risksError } = useRisks(projectId)
+  const { data: rfiItems = [], isLoading: loadingRfis, isError: rfisError } = useRfis(projectId)
+  const { data: documentItems = [], isLoading: loadingDocuments, isError: documentsError } = useDocuments(projectId)
+  const { data: mediaItems = [], isLoading: loadingMedia, isError: mediaError } = useMediaUpdates(projectId)
+  const { data: approvalItems = [], isLoading: loadingApprovals, isError: approvalsError } = useApprovals(projectId)
+  const { data: activityItems = [], isLoading: loadingActivity, isError: activityError } = useActivityLogs(projectId)
+  const loading =
+    loadingProjects ||
+    loadingBudgets ||
+    loadingMilestones ||
+    loadingRisks ||
+    loadingRfis ||
+    loadingDocuments ||
+    loadingMedia ||
+    loadingApprovals ||
+    loadingActivity
 
-  useEffect(() => {
-    if (!projectId) return
-    const load = async () => {
-      try {
-        const [
-          projectData,
-          budgetsData,
-          milestonesData,
-          risksData,
-          rfisData,
-          documentsData,
-          mediaData,
-          approvalsData,
-          activityData,
-        ] = await Promise.all([
-          getProjects(),
-          getBudgets(projectId),
-          getMilestones(projectId),
-          getRisks(projectId),
-          getRfis(projectId),
-          getDocuments(projectId),
-          getMediaUpdates(projectId),
-          getApprovals(projectId),
-          getActivityLogs(projectId),
-        ])
-        setProjects(projectData)
-        setBudgets(budgetsData)
-        setMilestoneItems(milestonesData)
-        setRiskItems(risksData)
-        setRfiItems(rfisData)
-        setDocumentItems(documentsData)
-        setMediaItems(mediaData)
-        setApprovalItems(approvalsData)
-        setActivityItems(activityData)
-      } catch (error) {
-        console.warn('Falling back to mock data', error)
-      }
-    }
-    load()
-  }, [projectId])
+  const projectBudgets = useMemo(
+    () => budgets.filter((item) => resolveProjectId(item) === projectId),
+    [budgets, projectId],
+  )
+  const projectMilestones = useMemo(
+    () => milestoneItems.filter((item) => resolveProjectId(item) === projectId),
+    [milestoneItems, projectId],
+  )
+  const projectRisks = useMemo(
+    () => riskItems.filter((item) => resolveProjectId(item) === projectId),
+    [riskItems, projectId],
+  )
+  const projectRfis = useMemo(
+    () => rfiItems.filter((item) => resolveProjectId(item) === projectId),
+    [rfiItems, projectId],
+  )
+  const projectDocuments = useMemo(
+    () => documentItems.filter((item) => resolveProjectId(item) === projectId),
+    [documentItems, projectId],
+  )
+  const projectMedia = useMemo(
+    () => mediaItems.filter((item) => resolveProjectId(item) === projectId),
+    [mediaItems, projectId],
+  )
+  const projectApprovals = useMemo(
+    () => approvalItems.filter((item) => resolveProjectId(item) === projectId),
+    [approvalItems, projectId],
+  )
+  const projectActivity = useMemo(
+    () => activityItems.filter((item) => resolveProjectId(item) === projectId),
+    [activityItems, projectId],
+  )
 
   const project = projects.find((item) => item.id === projectId)
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Loading workspace</h1>
+            <p className="page__subtitle">Fetching project data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading workspace" />
+      </section>
+    )
+  }
+
+  if (!project && projectsError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Workspace unavailable</h1>
+            <p className="page__subtitle">Project data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please refresh or try again later.</div>
+      </section>
+    )
+  }
 
   if (!project) {
     return (
@@ -126,39 +159,6 @@ const ProjectWorkspacePage = () => {
       </section>
     )
   }
-
-  const projectBudgets = useMemo(
-    () => budgets.filter((item) => item.project_id === project.id),
-    [budgets, project.id],
-  )
-  const projectMilestones = useMemo(
-    () => milestoneItems.filter((item) => item.project_id === project.id),
-    [milestoneItems, project.id],
-  )
-  const projectRisks = useMemo(
-    () => riskItems.filter((item) => item.project_id === project.id),
-    [riskItems, project.id],
-  )
-  const projectRfis = useMemo(
-    () => rfiItems.filter((item) => item.project_id === project.id),
-    [rfiItems, project.id],
-  )
-  const projectDocuments = useMemo(
-    () => documentItems.filter((item) => item.project_id === project.id),
-    [documentItems, project.id],
-  )
-  const projectMedia = useMemo(
-    () => mediaItems.filter((item) => item.project_id === project.id),
-    [mediaItems, project.id],
-  )
-  const projectApprovals = useMemo(
-    () => approvalItems.filter((item) => item.project_id === project.id),
-    [approvalItems, project.id],
-  )
-  const projectActivity = useMemo(
-    () => activityItems.filter((item) => item.project_id === project.id),
-    [activityItems, project.id],
-  )
 
   const budgetTotals = projectBudgets.reduce(
     (acc, item) => {
@@ -233,7 +233,10 @@ const ProjectWorkspacePage = () => {
           <h2>Budget tracking</h2>
           <span className="section__meta">{projectBudgets.length} categories</span>
         </div>
-        <div className="table">
+        {budgetsError ? (
+          <div className="notice">Budget data is unavailable.</div>
+        ) : (
+          <div className="table">
           <div className="table__header">
             <span>Category</span>
             <span>Original</span>
@@ -255,7 +258,8 @@ const ProjectWorkspacePage = () => {
               <Badge label={item.status.replace('_', ' ')} tone={budgetStatusTone(item.status)} />
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="milestones">
@@ -263,7 +267,10 @@ const ProjectWorkspacePage = () => {
           <h2>Timeline & milestones</h2>
           <span className="section__meta">Planned vs actual</span>
         </div>
-        <div className="table table--five">
+        {milestonesError ? (
+          <div className="notice">Milestone data is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>Milestone</span>
             <span>Planned</span>
@@ -283,7 +290,8 @@ const ProjectWorkspacePage = () => {
               <Badge label={item.status.replace('_', ' ')} tone={milestoneTone(item.status)} />
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="risks">
@@ -291,7 +299,10 @@ const ProjectWorkspacePage = () => {
           <h2>Risk register</h2>
           <span className="section__meta">{openRisks} open</span>
         </div>
-        <div className="table table--five">
+        {risksError ? (
+          <div className="notice">Risk data is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>Risk</span>
             <span>Category</span>
@@ -311,7 +322,8 @@ const ProjectWorkspacePage = () => {
               <Badge label={item.status.replace('_', ' ')} tone={item.status === 'closed' ? 'success' : 'warning'} />
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="rfis">
@@ -319,7 +331,10 @@ const ProjectWorkspacePage = () => {
           <h2>RFIs</h2>
           <span className="section__meta">{openRfis} open</span>
         </div>
-        <div className="table table--five">
+        {rfisError ? (
+          <div className="notice">RFI data is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>RFI</span>
             <span>Status</span>
@@ -339,7 +354,8 @@ const ProjectWorkspacePage = () => {
               <span>{item.response_summary}</span>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="documents">
@@ -347,7 +363,10 @@ const ProjectWorkspacePage = () => {
           <h2>Documents</h2>
           <span className="section__meta">{projectDocuments.length} files</span>
         </div>
-        <div className="table table--five">
+        {documentsError ? (
+          <div className="notice">Document data is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>Document</span>
             <span>Type</span>
@@ -367,7 +386,8 @@ const ProjectWorkspacePage = () => {
               <span>{item.uploaded_by}</span>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="media">
@@ -375,7 +395,10 @@ const ProjectWorkspacePage = () => {
           <h2>Media updates</h2>
           <span className="section__meta">{projectMedia.length} updates</span>
         </div>
-        <div className="grid grid--media">
+        {mediaError ? (
+          <div className="notice">Media updates are unavailable.</div>
+        ) : (
+          <div className="grid grid--media">
           {projectMedia.map((item) => (
             <div className="media-card" key={item.id}>
               <div className="media-card__image">
@@ -384,17 +407,21 @@ const ProjectWorkspacePage = () => {
               <div className="media-card__body">
                 <div className="media-card__header">
                   <h3>{item.title}</h3>
-                  <Badge label={item.media_type.replace('_', ' ')} tone={mediaTone(item.media_type)} />
+                  <Badge
+                    label={(item.media_type ?? 'update').replace('_', ' ')}
+                    tone={mediaTone(item.media_type ?? 'update')}
+                  />
                 </div>
                 <p className="subtle">{item.description}</p>
                 <div className="media-card__meta">
-                  <span>{item.captured_at.split('T')[0]}</span>
+                  <span>{formatDate(item.captured_at)}</span>
                   <span>Uploaded by {item.uploaded_by}</span>
                 </div>
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="approvals">
@@ -402,7 +429,10 @@ const ProjectWorkspacePage = () => {
           <h2>Approvals workflow</h2>
           <span className="section__meta">{pendingApprovals} pending</span>
         </div>
-        <div className="table table--five">
+        {approvalsError ? (
+          <div className="notice">Approval data is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>Item</span>
             <span>Status</span>
@@ -422,7 +452,8 @@ const ProjectWorkspacePage = () => {
               <span>{item.decision_note}</span>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="workspace__section" id="activity">
@@ -430,7 +461,10 @@ const ProjectWorkspacePage = () => {
           <h2>Activity log</h2>
           <span className="section__meta">Latest updates</span>
         </div>
-        <div className="table table--five">
+        {activityError ? (
+          <div className="notice">Activity log is unavailable.</div>
+        ) : (
+          <div className="table table--five">
           <div className="table__header">
             <span>Actor</span>
             <span>Action</span>
@@ -443,16 +477,19 @@ const ProjectWorkspacePage = () => {
               <div>
                 <strong>{item.actor}</strong>
                 <div className="subtle">
-                  {item.metadata.note ?? item.metadata.title ?? 'Update recorded'}
+                  {(item.metadata ?? {}).note ??
+                    (item.metadata ?? {}).title ??
+                    'Update recorded'}
                 </div>
               </div>
               <span>{item.action}</span>
               <span>{item.entity_type}</span>
               <span>{item.entity_id}</span>
-              <span>{item.created_at.split('T')[0]}</span>
+              <span>{formatDate(item.created_at)}</span>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   )

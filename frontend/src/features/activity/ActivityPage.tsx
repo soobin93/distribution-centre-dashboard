@@ -1,5 +1,6 @@
 import Badge from '../../components/Badge'
-import { activityLogs } from './mock'
+import Spinner from '../../components/Spinner'
+import { useActivityLogs } from '../../api/queries'
 
 const actionTone = (action: string) => {
   if (action === 'approve') return 'success'
@@ -9,6 +10,36 @@ const actionTone = (action: string) => {
 }
 
 const ActivityPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useActivityLogs()
+
+  if (loading) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Activity Log</h1>
+            <p className="page__subtitle">Loading activity data.</p>
+          </div>
+        </div>
+        <Spinner label="Loading activity" />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="page">
+        <div className="page__header">
+          <div>
+            <h1>Activity Log</h1>
+            <p className="page__subtitle">Activity data could not be loaded.</p>
+          </div>
+        </div>
+        <div className="notice">Please try again shortly.</div>
+      </section>
+    )
+  }
+
   return (
     <section className="page">
       <div className="page__header">
@@ -21,7 +52,7 @@ const ActivityPage = () => {
       </div>
 
       <div className="activity">
-        {activityLogs.map((log) => (
+        {items.map((log) => (
           <div className="activity__item" key={log.id}>
             <div className="activity__time">{log.created_at.split('T')[0]}</div>
             <div className="activity__content">
