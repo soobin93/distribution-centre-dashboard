@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import Badge from '../../components/Badge'
 import { projects } from './mock'
 
@@ -20,30 +21,32 @@ const ProjectsPage = () => {
         </div>
         <div className="grid grid--cards">
           {projects.map((project) => (
-            <div className="card card--light" key={project.id}>
-              <div className="card__header">
-                <div>
-                  <h3>{project.name}</h3>
-                  <p className="card__subtle">{project.location}</p>
+            <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
+              <div className="card card--light">
+                <div className="card__header">
+                  <div>
+                    <h3>{project.name}</h3>
+                    <p className="card__subtle">{project.location}</p>
+                  </div>
+                  <Badge label={project.status.replace('_', ' ')} tone="info" />
                 </div>
-                <Badge label={project.status.replace('_', ' ')} tone="info" />
+                <p className="card__body">{project.description}</p>
+                <div className="card__footer">
+                  <div>
+                    <span className="label">Start</span>
+                    <span>{project.start_date}</span>
+                  </div>
+                  <div>
+                    <span className="label">Target</span>
+                    <span>{project.end_date}</span>
+                  </div>
+                  <div>
+                    <span className="label">Program</span>
+                    <span>{project.program_name}</span>
+                  </div>
+                </div>
               </div>
-              <p className="card__body">{project.description}</p>
-              <div className="card__footer">
-                <div>
-                  <span className="label">Start</span>
-                  <span>{project.start_date}</span>
-                </div>
-                <div>
-                  <span className="label">Target</span>
-                  <span>{project.end_date}</span>
-                </div>
-                <div>
-                  <span className="label">Program</span>
-                  <span>{project.program_name}</span>
-                </div>
-              </div>
-            </div>
+            </NavLink>
           ))}
         </div>
       </div>

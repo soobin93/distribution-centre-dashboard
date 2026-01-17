@@ -1,15 +1,9 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 import "./App.css";
-import ActivityPage from "./features/activity/ActivityPage";
-import ApprovalsPage from "./features/approvals/ApprovalsPage";
-import BudgetsPage from "./features/budgets/BudgetsPage";
-import DocumentsPage from "./features/documents/DocumentsPage";
-import MediaUpdatesPage from "./features/media_updates/MediaUpdatesPage";
-import MilestonesPage from "./features/milestones/MilestonesPage";
 import ProgramSummaryPage from "./features/projects/ProgramSummaryPage";
+import ProjectWorkspacePage from "./features/projects/ProjectWorkspacePage";
 import ProjectsPage from "./features/projects/ProjectsPage";
-import RfisPage from "./features/rfis/RfisPage";
-import RisksPage from "./features/risks/RisksPage";
+import { projects } from "./features/projects/mock";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `nav-pill${isActive ? " is-active" : ""}`;
@@ -32,36 +26,17 @@ const AppLayout = () => {
             <NavLink to="/projects" className={navLinkClass}>
               Project workspaces
             </NavLink>
-            <NavLink to="/budgets" className={navLinkClass}>
-              Budgets
-            </NavLink>
-            <NavLink to="/milestones" className={navLinkClass}>
-              Milestones
-            </NavLink>
-            <NavLink to="/risks" className={navLinkClass}>
-              Risks
-            </NavLink>
-            <NavLink to="/rfis" className={navLinkClass}>
-              RFIs
-            </NavLink>
           </nav>
         </div>
 
         <div className="sidebar__section">
-          <div className="sidebar__label">Records</div>
+          <div className="sidebar__label">Workspaces</div>
           <nav className="sidebar__nav">
-            <NavLink to="/documents" className={navLinkClass}>
-              Documents
-            </NavLink>
-            <NavLink to="/media" className={navLinkClass}>
-              Media updates
-            </NavLink>
-            <NavLink to="/approvals" className={navLinkClass}>
-              Approvals
-            </NavLink>
-            <NavLink to="/activity" className={navLinkClass}>
-              Activity log
-            </NavLink>
+            {projects.map((project) => (
+              <NavLink key={project.id} to={`/projects/${project.id}`} className={navLinkClass}>
+                {project.name}
+              </NavLink>
+            ))}
           </nav>
         </div>
 
@@ -75,15 +50,11 @@ const AppLayout = () => {
 
       <div className="content">
         <header className="content__topbar">
-          <div className="topbar__meta">
-            <span className="topbar__eyebrow">Portfolio command centre</span>
-            <h1 className="topbar__title">Distribution Centres Program</h1>
-            <p className="topbar__subtitle">
-              Purpose-built for executive visibility, assurance, and decision readiness.
-            </p>
-          </div>
-          <div className="topbar__actions">
-          </div>
+          <span className="topbar__eyebrow">Portfolio command centre</span>
+          <h1 className="topbar__title">Distribution Centres Program</h1>
+          <p className="topbar__subtitle">
+            Purpose-built for executive visibility, assurance, and decision readiness.
+          </p>
         </header>
 
         <main className="main">
@@ -91,14 +62,7 @@ const AppLayout = () => {
             <Route index element={<ProgramSummaryPage />} />
             <Route path="summary" element={<ProgramSummaryPage />} />
             <Route path="projects" element={<ProjectsPage />} />
-            <Route path="budgets" element={<BudgetsPage />} />
-            <Route path="milestones" element={<MilestonesPage />} />
-            <Route path="risks" element={<RisksPage />} />
-            <Route path="rfis" element={<RfisPage />} />
-            <Route path="documents" element={<DocumentsPage />} />
-            <Route path="media" element={<MediaUpdatesPage />} />
-            <Route path="approvals" element={<ApprovalsPage />} />
-            <Route path="activity" element={<ActivityPage />} />
+            <Route path="projects/:projectId" element={<ProjectWorkspacePage />} />
             <Route
               path="*"
               element={

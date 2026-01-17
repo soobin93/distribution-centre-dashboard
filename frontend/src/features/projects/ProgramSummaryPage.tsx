@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import StatCard from '../../components/StatCard'
 import Badge from '../../components/Badge'
 import { programSummary, projects } from './mock'
@@ -34,30 +35,32 @@ const ProgramSummaryPage = () => {
         </div>
         <div className="grid grid--cards">
           {projects.map((project) => (
-            <div className="card card--light" key={project.id}>
-              <div className="card__header">
-                <div>
-                  <h3>{project.name}</h3>
-                  <p className="card__subtle">{project.location}</p>
+            <NavLink className="card-link" to={`/projects/${project.id}`} key={project.id}>
+              <div className="card card--light">
+                <div className="card__header">
+                  <div>
+                    <h3>{project.name}</h3>
+                    <p className="card__subtle">{project.location}</p>
+                  </div>
+                  <Badge label={project.status.replace('_', ' ')} tone="info" />
                 </div>
-                <Badge label={project.status.replace('_', ' ')} tone="info" />
+                <p className="card__body">{project.description}</p>
+                <div className="card__footer">
+                  <div>
+                    <span className="label">Start</span>
+                    <span>{project.start_date}</span>
+                  </div>
+                  <div>
+                    <span className="label">Target</span>
+                    <span>{project.end_date}</span>
+                  </div>
+                  <div>
+                    <span className="label">Stage</span>
+                    <span>{project.phase}</span>
+                  </div>
+                </div>
               </div>
-              <p className="card__body">{project.description}</p>
-              <div className="card__footer">
-                <div>
-                  <span className="label">Start</span>
-                  <span>{project.start_date}</span>
-                </div>
-                <div>
-                  <span className="label">Target</span>
-                  <span>{project.end_date}</span>
-                </div>
-                <div>
-                  <span className="label">Stage</span>
-                  <span>{project.phase}</span>
-                </div>
-              </div>
-            </div>
+            </NavLink>
           ))}
         </div>
       </div>
@@ -73,9 +76,6 @@ const ProgramSummaryPage = () => {
             <p className="card__body">
               Consolidated budget movement, risk posture, and approvals pipeline ready for steering committee.
             </p>
-            <button className="primary-button" type="button">
-              Open pack preview
-            </button>
           </div>
           <div className="card card--light">
             <h3>Upcoming milestones</h3>
