@@ -1,6 +1,6 @@
-import Badge from '../../components/Badge'
-import Spinner from '../../components/Spinner'
-import { useMediaUpdates } from '../../api/queries'
+import Badge from '@/components/Badge'
+import Spinner from '@/components/Spinner'
+import { useMediaUpdates } from '@/api/queries'
 
 const mediaTone = (type: string) => {
   if (type === 'camera_feed') return 'info'

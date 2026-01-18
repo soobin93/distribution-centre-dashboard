@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import Badge from '../../components/Badge'
-import Spinner from '../../components/Spinner'
-import { useProjects } from '../../api/queries'
+import Badge from '@/components/Badge'
+import Spinner from '@/components/Spinner'
+import { useProjects } from '@/api/queries'
 
 const ProjectsPage = () => {
   const { data: projectList = [], isLoading: loading, isError } = useProjects()

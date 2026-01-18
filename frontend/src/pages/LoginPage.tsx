@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../auth/AuthContext'
-import './LoginPage.css'
+import { useAuth } from '@/auth/AuthContext'
+import '@/pages/LoginPage.css'
 
 const LoginPage = () => {
   const { user, login } = useAuth()

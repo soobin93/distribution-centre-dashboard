@@ -1,6 +1,6 @@
-import Badge from '../../components/Badge'
-import Spinner from '../../components/Spinner'
-import { useActivityLogs } from '../../api/queries'
+import Badge from '@/components/Badge'
+import Spinner from '@/components/Spinner'
+import { useActivityLogs } from '@/api/queries'
 
 const actionTone = (action: string) => {
   if (action === 'approve') return 'success'

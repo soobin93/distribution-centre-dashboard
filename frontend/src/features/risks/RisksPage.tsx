@@ -1,6 +1,6 @@
-import Badge from '../../components/Badge'
-import Spinner from '../../components/Spinner'
-import { useRisks } from '../../api/queries'
+import Badge from '@/components/Badge'
+import Spinner from '@/components/Spinner'
+import { useRisks } from '@/api/queries'
 
 const ratingTone = (rating: number) => {
   if (rating >= 16) return 'danger'

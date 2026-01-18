@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import * as authApi from "../api/auth";
+import * as authApi from "@/api/auth";
 
 type User = {
   id: number;

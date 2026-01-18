@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
-import "./App.css";
-import ProgramSummaryPage from "./features/projects/ProgramSummaryPage";
-import ProjectWorkspacePage from "./features/projects/ProjectWorkspacePage";
-import ProjectsPage from "./features/projects/ProjectsPage";
-import RequireAuth from "./auth/RequireAuth";
-import LoginPage from "./pages/LoginPage";
-import { useProjects } from "./api/queries";
-import { useAuth } from "./auth/AuthContext";
-import Spinner from "./components/Spinner";
+import "@/App.css";
+import ProgramSummaryPage from "@/features/projects/ProgramSummaryPage";
+import ProjectWorkspacePage from "@/features/projects/ProjectWorkspacePage";
+import ProjectsPage from "@/features/projects/ProjectsPage";
+import RequireAuth from "@/auth/RequireAuth";
+import LoginPage from "@/pages/LoginPage";
+import { useProjects } from "@/api/queries";
+import { useAuth } from "@/auth/AuthContext";
+import Spinner from "@/components/Spinner";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `nav-pill${isActive ? " is-active" : ""}`;

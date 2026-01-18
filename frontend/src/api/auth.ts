@@ -1,4 +1,4 @@
-import { fetchJson } from './client'
+import { fetchJson } from '@/api/client'
 
 const getCookie = (name: string) => {
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`))

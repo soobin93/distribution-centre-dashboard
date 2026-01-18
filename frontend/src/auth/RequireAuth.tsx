@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
-import Spinner from '../components/Spinner'
-import { useAuth } from './AuthContext'
+import Spinner from '@/components/Spinner'
+import { useAuth } from '@/auth/AuthContext'
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth()

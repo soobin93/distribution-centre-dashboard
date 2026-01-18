@@ -1,4 +1,4 @@
-import './Spinner.css'
+import '@/components/Spinner.css'
 
 type SpinnerProps = {
   label?: string

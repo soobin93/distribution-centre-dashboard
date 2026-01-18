@@ -1,13 +1,13 @@
-import { fetchJson, unwrapResults } from './client'
-import type { ProgramSummary, Project } from '../features/projects/types'
-import type { BudgetItem } from '../features/budgets/types'
-import type { Milestone } from '../features/milestones/types'
-import type { Risk } from '../features/risks/types'
-import type { Rfi } from '../features/rfis/types'
-import type { Document } from '../features/documents/types'
-import type { MediaUpdate } from '../features/media_updates/types'
-import type { Approval } from '../features/approvals/types'
-import type { ActivityLog } from '../features/activity/types'
+import { fetchJson, unwrapResults } from '@/api/client'
+import type { ProgramSummary, Project } from '@/features/projects/types'
+import type { BudgetItem } from '@/features/budgets/types'
+import type { Milestone } from '@/features/milestones/types'
+import type { Risk } from '@/features/risks/types'
+import type { Rfi } from '@/features/rfis/types'
+import type { Document } from '@/features/documents/types'
+import type { MediaUpdate } from '@/features/media_updates/types'
+import type { Approval } from '@/features/approvals/types'
+import type { ActivityLog } from '@/features/activity/types'
 
 export const getProgramSummary = async () => fetchJson<ProgramSummary>('summary')
 

@@ -1,4 +1,4 @@
-import './Badge.css'
+import '@/components/Badge.css'
 
 type BadgeTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info'
 

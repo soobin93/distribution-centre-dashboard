@@ -10,7 +10,7 @@ import {
   getProjects,
   getRfis,
   getRisks,
-} from './program'
+} from '@/api/program'
 
 export const useProgramSummary = () =>
   useQuery({ queryKey: ['programSummary'], queryFn: getProgramSummary })

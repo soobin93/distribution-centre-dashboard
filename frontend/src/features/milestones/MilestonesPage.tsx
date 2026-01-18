@@ -1,6 +1,6 @@
-import Badge from '../../components/Badge'
-import Spinner from '../../components/Spinner'
-import { useMilestones } from '../../api/queries'
+import Badge from '@/components/Badge'
+import Spinner from '@/components/Spinner'
+import { useMilestones } from '@/api/queries'
 
 const statusTone = (status: string) => {
   if (status === 'done') return 'success'

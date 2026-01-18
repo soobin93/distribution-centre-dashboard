@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom'
-import StatCard from '../../components/StatCard'
-import Badge from '../../components/Badge'
-import { BarChart, DonutChart } from '../../components/Charts'
-import Spinner from '../../components/Spinner'
-import { useProgramSummary, useProjects } from '../../api/queries'
+import StatCard from '@/components/StatCard'
+import Badge from '@/components/Badge'
+import { BarChart, DonutChart } from '@/components/Charts'
+import Spinner from '@/components/Spinner'
+import { useProgramSummary, useProjects } from '@/api/queries'
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-AU', {

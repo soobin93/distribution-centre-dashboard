@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import Badge from '../../components/Badge'
-import StatCard from '../../components/StatCard'
-import Spinner from '../../components/Spinner'
+import Badge from '@/components/Badge'
+import StatCard from '@/components/StatCard'
+import Spinner from '@/components/Spinner'
 import {
   useActivityLogs,
   useApprovals,
@@ -13,8 +13,8 @@ import {
   useProjects,
   useRfis,
   useRisks,
-} from '../../api/queries'
-import type { Project } from './types'
+} from '@/api/queries'
+import type { Project } from '@/features/projects/types'
 
 const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {
