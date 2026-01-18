@@ -1,4 +1,4 @@
-# Infrastructure Delivery Dashboard (Mock)
+# Emergency Services Infrastructure Dashboard (Mock)
 
 An executive-facing **mock dashboard** designed to demonstrate how large-scale capital infrastructure projects can be tracked and reported in a single system.
 
@@ -10,7 +10,7 @@ All data in this repository is **synthetic** and used for demonstration purposes
 
 ## Context
 
-The dashboard is modelled around a capital infrastructure program delivering **Distribution Centres** across multiple locations, including:
+The dashboard is modelled around a capital infrastructure program delivering **Emergency Services Infrastructure** across multiple locations, including:
 - North Brisbane
 - South Brisbane
 

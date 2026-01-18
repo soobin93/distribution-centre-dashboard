@@ -3,13 +3,13 @@
     "model": "core.project",
     "pk": "proj-nb-001",
     "fields": {
-      "name": "North Brisbane Distribution Centre",
+      "name": "North Brisbane Emergency Services Facility",
       "location": "Brendale, QLD",
       "status": "active",
       "start_date": "2025-07-01",
       "end_date": "2026-12-15",
-      "description": "Greenfield distribution hub with cold-chain capability.",
-      "program_name": "Distribution Centres",
+      "description": "Greenfield emergency response hub with fleet, communications, and logistics capability.",
+      "program_name": "Emergency Services Infrastructure",
       "phase": "Construction",
       "created_at": "2025-06-12T09:00:00Z",
       "updated_at": "2026-01-08T04:10:00Z"
@@ -19,13 +19,13 @@
     "model": "core.project",
     "pk": "proj-sb-002",
     "fields": {
-      "name": "South Brisbane Distribution Centre",
+      "name": "South Brisbane Emergency Services Facility",
       "location": "Logan, QLD",
       "status": "active",
       "start_date": "2025-09-15",
       "end_date": "2027-03-30",
-      "description": "High-throughput automation upgrade to existing facility.",
-      "program_name": "Distribution Centres",
+      "description": "Upgrade of existing emergency services facility with modern dispatch and operations capability.",
+      "program_name": "Emergency Services Infrastructure",
       "phase": "Design + Procurement",
       "created_at": "2025-08-02T11:30:00Z",
       "updated_at": "2026-01-10T01:45:00Z"
@@ -55,7 +55,7 @@
     "fields": {
       "project": "proj-nb-001",
       "category": "Mechanical & Electrical",
-      "description": "Automation, conveyors, power upgrades",
+      "description": "Dispatch systems, backup power, radio communications upgrades",
       "original_budget": "68000000",
       "approved_variations": "6200000",
       "forecast_cost": "74400000",
@@ -73,7 +73,7 @@
     "fields": {
       "project": "proj-sb-002",
       "category": "Fit-out",
-      "description": "Racking, cold storage, staff amenities",
+      "description": "Operations rooms, training spaces, staff amenities",
       "original_budget": "36000000",
       "approved_variations": "900000",
       "forecast_cost": "36900000",
@@ -105,8 +105,8 @@
     "pk": "ms-002",
     "fields": {
       "project": "proj-nb-001",
-      "name": "Structural steel erected",
-      "description": "Main warehouse frame and mezzanine complete.",
+      "name": "Structural frame erected",
+      "description": "Main operations centre frame and mezzanine complete.",
       "planned_date": "2026-02-05",
       "actual_date": null,
       "status": "in_progress",
@@ -120,8 +120,8 @@
     "pk": "ms-003",
     "fields": {
       "project": "proj-sb-002",
-      "name": "Automation procurement",
-      "description": "Vendor selection and contract finalised.",
+      "name": "Communications systems procurement",
+      "description": "Vendor selection and contract finalised for radio/dispatch systems.",
       "planned_date": "2026-01-20",
       "actual_date": null,
       "status": "at_risk",
@@ -154,8 +154,8 @@
     "pk": "risk-002",
     "fields": {
       "project": "proj-sb-002",
-      "title": "Automation integration complexity",
-      "description": "Legacy systems may not align with new automation specs.",
+      "title": "Dispatch system integration complexity",
+      "description": "Legacy systems may not align with new dispatch and communications specs.",
       "category": "Technical",
       "likelihood": 4,
       "impact": 4,
@@ -174,8 +174,8 @@
     "fields": {
       "project": "proj-nb-001",
       "rfi_number": "RFI-118",
-      "title": "Clarify roof insulation spec",
-      "question": "Confirm insulation rating for cold-chain roof assembly.",
+      "title": "Clarify roof insulation spec for operations wing",
+      "question": "Confirm insulation rating for operations centre roof assembly.",
       "status": "open",
       "raised_by": "D. Singh",
       "raised_at": "2026-01-05T02:30:00Z",
@@ -192,8 +192,8 @@
     "fields": {
       "project": "proj-sb-002",
       "rfi_number": "RFI-204",
-      "title": "Automation mezzanine clearance",
-      "question": "Confirm clearance zone for mezzanine conveyor alignment.",
+      "title": "Dispatch floor clearance",
+      "question": "Confirm clearance zone for dispatch floor equipment alignment.",
       "status": "answered",
       "raised_by": "L. Chen",
       "raised_at": "2026-01-03T05:40:00Z",
@@ -260,8 +260,8 @@
     "pk": "media-001",
     "fields": {
       "project": "proj-nb-001",
-      "title": "North Brisbane - Slab pour complete",
-      "description": "Completion of slab pour for main warehouse footprint.",
+      "title": "North Brisbane - Operations slab pour complete",
+      "description": "Completion of slab pour for main operations footprint.",
       "media_type": "photo",
       "media_url": "http://localhost:5173/media/blueprint-1.svg",
       "captured_at": "2026-01-06T03:10:00Z",
@@ -275,8 +275,8 @@
     "pk": "media-002",
     "fields": {
       "project": "proj-sb-002",
-      "title": "South Brisbane - Automation area survey",
-      "description": "Survey complete ahead of equipment delivery.",
+      "title": "South Brisbane - Dispatch area survey",
+      "description": "Survey complete ahead of dispatch equipment delivery.",
       "media_type": "update",
       "media_url": "http://localhost:5173/media/demolition-1.svg",
       "captured_at": "2026-01-12T02:30:00Z",
@@ -343,7 +343,9 @@
       "action": "submit",
       "entity_type": "document",
       "entity_id": "doc-101",
-      "metadata": {"title": "Structural GA v3"},
+      "metadata": {
+        "title": "Structural GA v3"
+      },
       "created_at": "2026-01-12T02:05:00Z",
       "updated_at": "2026-01-12T02:05:00Z"
     }
@@ -357,7 +359,10 @@
       "action": "approve",
       "entity_type": "approval",
       "entity_id": "appr-001",
-      "metadata": {"decision": "Approved", "note": "Compliance complete"},
+      "metadata": {
+        "decision": "Approved",
+        "note": "Compliance complete"
+      },
       "created_at": "2026-01-10T05:40:00Z",
       "updated_at": "2026-01-10T05:40:00Z"
     }
@@ -371,7 +376,9 @@
       "action": "update",
       "entity_type": "milestone",
       "entity_id": "ms-002",
-      "metadata": {"percent_complete": 65},
+      "metadata": {
+        "percent_complete": 65
+      },
       "created_at": "2026-01-09T00:10:00Z",
       "updated_at": "2026-01-09T00:10:00Z"
     }

@@ -26,7 +26,7 @@ const ProjectsPage = () => {
         <div>
           <h1>Project Workspaces</h1>
           <p className="page__subtitle">
-            Dedicated workspaces for each distribution centre project, with live reporting context.
+            Dedicated workspaces for each emergency services infrastructure project, with live reporting context.
           </p>
         </div>
       </div>

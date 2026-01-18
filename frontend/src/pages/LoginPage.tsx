@@ -33,7 +33,7 @@ const LoginPage = () => {
     <div className="login">
       <div className="login__card">
         <div className="login__header">
-          <p className="login__eyebrow">Distribution Centres</p>
+          <p className="login__eyebrow">Emergency Services Infrastructure</p>
           <h1>Sign in</h1>
         </div>
         <form className="login__form" onSubmit={handleSubmit}>
@@ -55,7 +55,7 @@ const LoginPage = () => {
           </button>
         </form>
         <div className="login__terms">
-          By continuing you agree to the Distribution Centres governance and usage terms.
+          By continuing you agree to the Emergency Services Infrastructure governance and usage terms.
         </div>
       </div>
     </div>

@@ -44,7 +44,7 @@ const ProgramSummaryPage = () => {
         <div>
           <h1>Program Summary</h1>
           <p className="page__subtitle">
-            Executive overview of the Distribution Centres capital infrastructure program.
+            Executive overview of the Emergency Services Infrastructure capital infrastructure program.
           </p>
         </div>
         <div className="header__chips">
@@ -151,7 +151,7 @@ const ProgramSummaryPage = () => {
             </div>
             <div className="card card--light">
               <h3>Milestones completed</h3>
-              <p className="card__body">Overall completion across both distribution centres.</p>
+              <p className="card__body">Overall completion across both emergency services infrastructure.</p>
               <DonutChart
                 value={summary.milestones_completed.completed}
                 total={summary.milestones_completed.total}

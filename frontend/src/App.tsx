@@ -44,7 +44,7 @@ const AppLayout = () => {
       ) : null}
       <aside className={`sidebar${sidebarOpen ? " is-open" : ""}`}>
         <div className="sidebar__brand">
-          <div className="brand__title">Distribution Centres</div>
+          <div className="brand__title">Emergency Services Infrastructure</div>
           <div className="brand__subtitle">Capital Infrastructure Program</div>
         </div>
 
@@ -106,7 +106,7 @@ const AppLayout = () => {
             ☰
           </button>
           <span className="topbar__eyebrow">Portfolio command centre</span>
-          <h1 className="topbar__title">Distribution Centres Program</h1>
+          <h1 className="topbar__title">Emergency Services Infrastructure Program</h1>
           <p className="topbar__subtitle">
             Purpose-built for executive visibility, assurance, and decision readiness.
           </p>

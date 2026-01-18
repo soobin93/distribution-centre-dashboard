@@ -153,7 +153,7 @@ const ProjectWorkspacePage = () => {
         <div className="page__header">
           <div>
             <h1>Project not found</h1>
-            <p className="page__subtitle">Select a distribution centre workspace to continue.</p>
+            <p className="page__subtitle">Select a emergency services infrastructure workspace to continue.</p>
           </div>
         </div>
       </section>
