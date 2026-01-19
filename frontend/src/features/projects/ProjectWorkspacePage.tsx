@@ -14,7 +14,6 @@ import {
   useRfis,
   useRisks,
 } from '@/api/queries'
-import type { Project } from '@/features/projects/types'
 
 const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {

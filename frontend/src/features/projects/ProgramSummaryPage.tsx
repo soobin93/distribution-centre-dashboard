@@ -13,11 +13,7 @@ const formatCurrency = (value: number) =>
   }).format(value)
 
 const ProgramSummaryPage = () => {
-  const {
-    data: summary,
-    isLoading: loadingSummary,
-    isError: summaryError,
-  } = useProgramSummary()
+  const { data: summary, isLoading: loadingSummary } = useProgramSummary()
   const {
     data: projectList = [],
     isLoading: loadingProjects,
