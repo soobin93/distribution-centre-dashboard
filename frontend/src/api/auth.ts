@@ -6,8 +6,8 @@ const getCookie = (name: string) => {
 }
 
 export const ensureCsrfToken = async () => {
-  await fetchJson<{ csrfToken: string }>('auth/csrf')
-  return getCookie('csrftoken')
+  const payload = await fetchJson<{ csrfToken: string }>('auth/csrf')
+  return payload?.csrfToken ?? getCookie('csrftoken')
 }
 
 export const login = async (username: string, password: string) => {
