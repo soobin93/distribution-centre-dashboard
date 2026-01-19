@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "@/App.css";
 import ProgramSummaryPage from "@/features/projects/ProgramSummaryPage";
 import ProjectWorkspacePage from "@/features/projects/ProjectWorkspacePage";
 import ProjectsPage from "@/features/projects/ProjectsPage";
 import MediaLibraryPage from "@/features/media_items/MediaLibraryPage";
-import RequireAuth from "@/auth/RequireAuth";
 import LoginPage from "@/pages/LoginPage";
 import { useProjects } from "@/api/queries";
 import { useAuth } from "@/auth/AuthContext";
@@ -14,8 +13,7 @@ import Spinner from "@/components/Spinner";
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `nav-pill${isActive ? " is-active" : ""}`;
 
-const AppLayout = () => {
-  const location = useLocation();
+const AuthedAppLayout = () => {
   const { logout, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const {
@@ -23,9 +21,6 @@ const AppLayout = () => {
     isLoading: loadingWorkspaces,
     isError: workspacesError,
   } = useProjects();
-  if (location.pathname === "/login") {
-    return <LoginPage />;
-  }
 
   const handleNavClick = () => {
     if (window.innerWidth <= 1100) {
@@ -118,46 +113,14 @@ const AppLayout = () => {
 
         <main className="main">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <RequireAuth>
-                  <ProgramSummaryPage />
-                </RequireAuth>
-              }
-            />
+            <Route path="/" element={<ProgramSummaryPage />} />
             <Route
               path="/summary"
-              element={
-                <RequireAuth>
-                  <ProgramSummaryPage />
-                </RequireAuth>
-              }
+              element={<ProgramSummaryPage />}
             />
-            <Route
-              path="/projects"
-              element={
-                <RequireAuth>
-                  <ProjectsPage />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/projects/:projectId"
-              element={
-                <RequireAuth>
-                  <ProjectWorkspacePage />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/media"
-              element={
-                <RequireAuth>
-                  <MediaLibraryPage />
-                </RequireAuth>
-              }
-            />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/:projectId" element={<ProjectWorkspacePage />} />
+            <Route path="/media" element={<MediaLibraryPage />} />
             <Route
               path="*"
               element={
@@ -178,6 +141,32 @@ const AppLayout = () => {
       </div>
     </div>
   );
+};
+
+const AppLayout = () => {
+  const location = useLocation();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="auth-shell">
+        <Spinner label="Checking session…" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    if (location.pathname === "/login") {
+      return <LoginPage />;
+    }
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  if (location.pathname === "/login") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <AuthedAppLayout />;
 };
 
 function App() {
