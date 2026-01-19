@@ -94,8 +94,25 @@ export const submitApproval = async (approvalId: string) => {
   })
 }
 
-export const getActivityLogs = async (projectId?: string) => {
-  const query = projectId ? `activity?project_id=${encodeURIComponent(projectId)}` : 'activity'
-  const payload = await fetchJson<ActivityLog[] | { results: ActivityLog[] }>(query)
-  return unwrapResults(payload)
+export type PaginatedResponse<T> = {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
+}
+
+export const getActivityLogs = async (projectId?: string, page = 1) => {
+  const params = new URLSearchParams()
+  if (projectId) {
+    params.set('project_id', projectId)
+  }
+  if (page > 1) {
+    params.set('page', String(page))
+  }
+  const query = params.toString() ? `activity?${params.toString()}` : 'activity'
+  const payload = await fetchJson<ActivityLog[] | PaginatedResponse<ActivityLog>>(query)
+  if (Array.isArray(payload)) {
+    return { count: payload.length, next: null, previous: null, results: payload }
+  }
+  return payload
 }

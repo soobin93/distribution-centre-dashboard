@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import Badge from '@/components/Badge'
@@ -66,6 +66,11 @@ const resolveProjectId = (item: { project_id?: string; project?: string }) =>
 const ProjectWorkspacePage = () => {
   const { projectId } = useParams()
   const queryClient = useQueryClient()
+  const [activityPage, setActivityPage] = useState(1)
+  const [approvalAction, setApprovalAction] = useState<{
+    id: string
+    type: 'approve' | 'reject' | 'reopen'
+  } | null>(null)
   const { data: projects = [], isLoading: loadingProjects, isError: projectsError } = useProjects()
   const { data: budgets = [], isLoading: loadingBudgets, isError: budgetsError } = useBudgets(projectId)
   const { data: milestoneItems = [], isLoading: loadingMilestones, isError: milestonesError } = useMilestones(projectId)
@@ -80,28 +85,55 @@ const ProjectWorkspacePage = () => {
     isFetching: approvalsFetching,
   } = useApprovals(projectId)
   const {
-    data: activityItems = [],
+    data: activityPayload,
     isLoading: loadingActivity,
     isError: activityError,
     isFetching: activityFetching,
-  } = useActivityLogs(projectId)
+  } = useActivityLogs(projectId, activityPage)
+  const activityItems = useMemo(() => activityPayload?.results ?? [], [activityPayload])
+  const activityTotalPages = useMemo(() => {
+    if (!activityPayload) return 1
+    return Math.max(1, Math.ceil(activityPayload.count / 20))
+  }, [activityPayload])
+  const activityPageWindow = useMemo(() => {
+    const windowSize = 5
+    let start = Math.max(1, activityPage - 2)
+    const end = Math.min(activityTotalPages, start + windowSize - 1)
+    start = Math.max(1, end - windowSize + 1)
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index)
+  }, [activityPage, activityTotalPages])
   const approvalActionBusyRefetch = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['approvals', projectId ?? 'all'] }),
-      queryClient.invalidateQueries({ queryKey: ['activity', projectId ?? 'all'] }),
+      queryClient.invalidateQueries({ queryKey: ['activity', projectId ?? 'all', activityPage] }),
     ])
   }
   const approveMutation = useMutation({
     mutationFn: (approvalId: string) => approveApproval(approvalId),
-    onSuccess: approvalActionBusyRefetch,
+    onMutate: (approvalId) => setApprovalAction({ id: approvalId, type: 'approve' }),
+    onSuccess: async () => {
+      await approvalActionBusyRefetch()
+      setApprovalAction(null)
+    },
+    onError: () => setApprovalAction(null),
   })
   const rejectMutation = useMutation({
     mutationFn: (approvalId: string) => rejectApproval(approvalId),
-    onSuccess: approvalActionBusyRefetch,
+    onMutate: (approvalId) => setApprovalAction({ id: approvalId, type: 'reject' }),
+    onSuccess: async () => {
+      await approvalActionBusyRefetch()
+      setApprovalAction(null)
+    },
+    onError: () => setApprovalAction(null),
   })
   const submitMutation = useMutation({
     mutationFn: (approvalId: string) => submitApproval(approvalId),
-    onSuccess: approvalActionBusyRefetch,
+    onMutate: (approvalId) => setApprovalAction({ id: approvalId, type: 'reopen' }),
+    onSuccess: async () => {
+      await approvalActionBusyRefetch()
+      setApprovalAction(null)
+    },
+    onError: () => setApprovalAction(null),
   })
   const approvalsUpdating =
     approveMutation.isPending ||
@@ -484,53 +516,42 @@ const ProjectWorkspacePage = () => {
             <span>Actions</span>
           </div>
           {projectApprovals.map((item) => {
-            const approving = approveMutation.isPending && approveMutation.variables === item.id
-            const rejecting = rejectMutation.isPending && rejectMutation.variables === item.id
-            const reopening = submitMutation.isPending && submitMutation.variables === item.id
+            const rowBusy = approvalAction?.id === item.id
             return (
             <div className="table__row" key={item.id}>
               <div>
                 <strong>{item.entity_type}</strong>
                 <div className="subtle">{item.entity_id}</div>
               </div>
-              <Badge label={item.status} tone={approvalTone(item.status)} />
+              <div className="table__badge">
+                <Badge label={item.status} tone={approvalTone(item.status)} />
+              </div>
               <span>{item.requested_by}</span>
               <span>{item.reviewed_by ?? '—'}</span>
               <span>{item.decision_note || '—'}</span>
               <div className="table__actions">
-                {item.status === 'pending' ? (
+                {rowBusy ? (
+                  <>
+                    <span className="inline-spinner" aria-hidden="true" />
+                    <span className="subtle">Processing</span>
+                  </>
+                ) : item.status === 'pending' ? (
                   <>
                     <button
                       className="link-button"
                       type="button"
                       disabled={approvalsUpdating}
-                      aria-busy={approving}
                       onClick={() => approveMutation.mutate(item.id)}
                     >
-                      {approving ? (
-                        <>
-                          <span className="inline-spinner" aria-hidden="true" />
-                          Approving
-                        </>
-                      ) : (
-                        'Approve'
-                      )}
+                      Approve
                     </button>
                     <button
                       className="link-button"
                       type="button"
                       disabled={approvalsUpdating}
-                      aria-busy={rejecting}
                       onClick={() => rejectMutation.mutate(item.id)}
                     >
-                      {rejecting ? (
-                        <>
-                          <span className="inline-spinner" aria-hidden="true" />
-                          Rejecting
-                        </>
-                      ) : (
-                        'Reject'
-                      )}
+                      Reject
                     </button>
                   </>
                 ) : (
@@ -538,17 +559,9 @@ const ProjectWorkspacePage = () => {
                     className="link-button"
                     type="button"
                     disabled={approvalsUpdating}
-                    aria-busy={reopening}
                     onClick={() => submitMutation.mutate(item.id)}
                   >
-                    {reopening ? (
-                      <>
-                        <span className="inline-spinner" aria-hidden="true" />
-                        Reopening
-                      </>
-                    ) : (
-                      'Reopen'
-                    )}
+                    Reopen
                   </button>
                 )}
               </div>
@@ -566,6 +579,8 @@ const ProjectWorkspacePage = () => {
         </div>
         {activityError ? (
           <div className="notice">Activity log is unavailable.</div>
+        ) : loadingActivity ? (
+          <Spinner label="Loading activity log" />
         ) : (
           <div className="table table--five">
           <div className="table__header">
@@ -591,8 +606,68 @@ const ProjectWorkspacePage = () => {
               <span>{formatDate(item.created_at)}</span>
             </div>
           ))}
+          {activityFetching ? (
+            <div className="table__row">
+              <div>
+                <span className="inline-spinner" aria-hidden="true" />
+                <span className="subtle">Updating activity…</span>
+              </div>
+            </div>
+          ) : null}
           </div>
         )}
+        {!activityError && activityPayload ? (
+          <div className="pagination">
+            <div className="pagination__meta">
+              Page {activityPage} of {activityTotalPages}
+            </div>
+            <div className="pagination__controls">
+              <button
+                className="link-button"
+                type="button"
+                disabled={activityPage === 1 || activityFetching}
+                onClick={() => setActivityPage(1)}
+              >
+                First
+              </button>
+              <button
+                className="link-button"
+                type="button"
+                disabled={activityPage === 1 || activityFetching}
+                onClick={() => setActivityPage((prev) => Math.max(1, prev - 1))}
+              >
+                Previous
+              </button>
+              {activityPageWindow.map((page) => (
+                <button
+                  key={page}
+                  className={`link-button pagination__page${page === activityPage ? ' is-active' : ''}`}
+                  type="button"
+                  disabled={activityFetching}
+                  onClick={() => setActivityPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                className="link-button"
+                type="button"
+                disabled={activityPage === activityTotalPages || activityFetching}
+                onClick={() => setActivityPage((prev) => Math.min(activityTotalPages, prev + 1))}
+              >
+                Next
+              </button>
+              <button
+                className="link-button"
+                type="button"
+                disabled={activityPage === activityTotalPages || activityFetching}
+                onClick={() => setActivityPage(activityTotalPages)}
+              >
+                Last
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   )

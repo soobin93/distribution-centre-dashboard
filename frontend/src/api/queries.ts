@@ -38,5 +38,8 @@ export const useMediaItems = (projectId?: string) =>
 export const useApprovals = (projectId?: string) =>
   useQuery({ queryKey: ['approvals', projectId ?? 'all'], queryFn: () => getApprovals(projectId) })
 
-export const useActivityLogs = (projectId?: string) =>
-  useQuery({ queryKey: ['activity', projectId ?? 'all'], queryFn: () => getActivityLogs(projectId) })
+export const useActivityLogs = (projectId?: string, page = 1) =>
+  useQuery({
+    queryKey: ['activity', projectId ?? 'all', page],
+    queryFn: () => getActivityLogs(projectId, page),
+  })
