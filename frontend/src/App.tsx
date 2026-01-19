@@ -4,6 +4,7 @@ import "@/App.css";
 import ProgramSummaryPage from "@/features/projects/ProgramSummaryPage";
 import ProjectWorkspacePage from "@/features/projects/ProjectWorkspacePage";
 import ProjectsPage from "@/features/projects/ProjectsPage";
+import MediaLibraryPage from "@/features/media_items/MediaLibraryPage";
 import RequireAuth from "@/auth/RequireAuth";
 import LoginPage from "@/pages/LoginPage";
 import { useProjects } from "@/api/queries";
@@ -56,6 +57,9 @@ const AppLayout = () => {
             </NavLink>
             <NavLink to="/projects" className={navLinkClass} onClick={handleNavClick}>
               Project workspaces
+            </NavLink>
+            <NavLink to="/media" className={navLinkClass} onClick={handleNavClick}>
+              Media Library
             </NavLink>
           </nav>
         </div>
@@ -143,6 +147,14 @@ const AppLayout = () => {
               element={
                 <RequireAuth>
                   <ProjectWorkspacePage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/media"
+              element={
+                <RequireAuth>
+                  <MediaLibraryPage />
                 </RequireAuth>
               }
             />

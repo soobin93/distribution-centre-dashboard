@@ -8,7 +8,7 @@ import {
   useApprovals,
   useBudgets,
   useDocuments,
-  useMediaUpdates,
+  useMediaItems,
   useMilestones,
   useProjects,
   useRfis,
@@ -70,7 +70,7 @@ const ProjectWorkspacePage = () => {
   const { data: riskItems = [], isLoading: loadingRisks, isError: risksError } = useRisks(projectId)
   const { data: rfiItems = [], isLoading: loadingRfis, isError: rfisError } = useRfis(projectId)
   const { data: documentItems = [], isLoading: loadingDocuments, isError: documentsError } = useDocuments(projectId)
-  const { data: mediaItems = [], isLoading: loadingMedia, isError: mediaError } = useMediaUpdates(projectId)
+  const { data: mediaItems = [], isLoading: loadingMedia, isError: mediaError } = useMediaItems(projectId)
   const { data: approvalItems = [], isLoading: loadingApprovals, isError: approvalsError } = useApprovals(projectId)
   const { data: activityItems = [], isLoading: loadingActivity, isError: activityError } = useActivityLogs(projectId)
   const loading =
@@ -218,7 +218,7 @@ const ProjectWorkspacePage = () => {
           Documents
         </a>
         <a className="workspace__link" href="#media">
-          Media
+          Media Library
         </a>
         <a className="workspace__link" href="#approvals">
           Approvals
@@ -392,17 +392,23 @@ const ProjectWorkspacePage = () => {
 
       <div className="workspace__section" id="media">
         <div className="section__header">
-          <h2>Media updates</h2>
-          <span className="section__meta">{projectMedia.length} updates</span>
+        <h2>Media Library</h2>
+        <span className="section__meta">{projectMedia.length} items</span>
         </div>
         {mediaError ? (
-          <div className="notice">Media updates are unavailable.</div>
+          <div className="notice">Media library items are unavailable.</div>
         ) : (
           <div className="grid grid--media">
           {projectMedia.map((item) => (
             <div className="media-card" key={item.id}>
               <div className="media-card__image">
-                <img src={item.media_url} alt={item.title} />
+                <img
+                  src={item.media_url}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
+                />
               </div>
               <div className="media-card__body">
                 <div className="media-card__header">

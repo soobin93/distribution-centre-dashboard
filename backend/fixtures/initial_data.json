@@ -256,51 +256,6 @@
     }
   },
   {
-    "model": "core.mediaupdate",
-    "pk": "media-001",
-    "fields": {
-      "project": "proj-nb-001",
-      "title": "North Brisbane - Operations slab pour complete",
-      "description": "Completion of slab pour for main operations footprint.",
-      "media_type": "photo",
-      "media_url": "http://localhost:5173/media/blueprint-1.svg",
-      "captured_at": "2026-01-06T03:10:00Z",
-      "uploaded_by": "K. Nguyen",
-      "created_at": "2026-01-06T03:10:00Z",
-      "updated_at": "2026-01-06T03:10:00Z"
-    }
-  },
-  {
-    "model": "core.mediaupdate",
-    "pk": "media-002",
-    "fields": {
-      "project": "proj-sb-002",
-      "title": "South Brisbane - Dispatch area survey",
-      "description": "Survey complete ahead of dispatch equipment delivery.",
-      "media_type": "update",
-      "media_url": "http://localhost:5173/media/demolition-1.svg",
-      "captured_at": "2026-01-12T02:30:00Z",
-      "uploaded_by": "R. Lopez",
-      "created_at": "2026-01-12T02:30:00Z",
-      "updated_at": "2026-01-12T02:30:00Z"
-    }
-  },
-  {
-    "model": "core.mediaupdate",
-    "pk": "media-003",
-    "fields": {
-      "project": "proj-nb-001",
-      "title": "Live Camera Feed",
-      "description": "Placeholder for live site camera feed.",
-      "media_type": "camera_feed",
-      "media_url": "http://localhost:5173/media/blueprint-2.svg",
-      "captured_at": "2026-01-17T00:00:00Z",
-      "uploaded_by": "System",
-      "created_at": "2026-01-17T00:00:00Z",
-      "updated_at": "2026-01-17T00:00:00Z"
-    }
-  },
-  {
     "model": "core.approval",
     "pk": "appr-001",
     "fields": {

@@ -1,6 +1,6 @@
 import Badge from '@/components/Badge'
 import Spinner from '@/components/Spinner'
-import { useMediaUpdates } from '@/api/queries'
+import { useMediaItems } from '@/api/queries'
 
 const mediaTone = (type: string) => {
   if (type === 'camera_feed') return 'info'
@@ -8,8 +8,8 @@ const mediaTone = (type: string) => {
   return 'neutral'
 }
 
-const MediaUpdatesPage = () => {
-  const { data: items = [], isLoading: loading, isError } = useMediaUpdates()
+const MediaLibraryPage = () => {
+  const { data: items = [], isLoading: loading, isError } = useMediaItems()
 
   if (loading) {
     return (
@@ -44,9 +44,7 @@ const MediaUpdatesPage = () => {
       <div className="page__header">
         <div>
           <h1>Media Library</h1>
-          <p className="page__subtitle">
-            Photo gallery and live camera placeholders across project sites.
-          </p>
+          <p className="page__subtitle">Centralized media items across project sites.</p>
         </div>
       </div>
 
@@ -54,7 +52,13 @@ const MediaUpdatesPage = () => {
         {items.map((item) => (
           <div className="media-card" key={item.id}>
             <div className="media-card__image">
-              <img src={item.media_url} alt={item.title} />
+              <img
+                src={item.media_url}
+                alt={item.title}
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+              />
             </div>
             <div className="media-card__body">
               <div className="media-card__header">
@@ -74,4 +78,4 @@ const MediaUpdatesPage = () => {
   )
 }
 
-export default MediaUpdatesPage
+export default MediaLibraryPage

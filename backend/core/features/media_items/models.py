@@ -3,14 +3,14 @@ from core.features.common.models import TimeStampedModel
 from core.features.projects.models import Project
 
 
-class MediaUpdate(TimeStampedModel):
+class MediaItem(TimeStampedModel):
     class MediaType(models.TextChoices):
         PHOTO = 'photo', 'Photo'
         UPDATE = 'update', 'Update'
         CAMERA_FEED = 'camera_feed', 'Camera feed'
 
     id = models.CharField(max_length=32, primary_key=True)
-    project = models.ForeignKey(Project, related_name='media_updates', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='media_items', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     media_type = models.CharField(max_length=20, choices=MediaType.choices)

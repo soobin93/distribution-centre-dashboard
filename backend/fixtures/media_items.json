@@ -1,0 +1,47 @@
+[
+  {
+    "model": "core.mediaitem",
+    "pk": "media-001",
+    "fields": {
+      "project": "proj-nb-001",
+      "title": "North Brisbane - Facility blueprint",
+      "description": "Blueprint of the facility.",
+      "media_type": "photo",
+      "media_url": "/media/blueprint%201.jpg",
+      "captured_at": "2026-01-06T03:10:00Z",
+      "uploaded_by": "K. Nguyen",
+      "created_at": "2026-01-06T03:10:00Z",
+      "updated_at": "2026-01-06T03:10:00Z"
+    }
+  },
+  {
+    "model": "core.mediaitem",
+    "pk": "media-002",
+    "fields": {
+      "project": "proj-sb-002",
+      "title": "South Brisbane - Aerial view of second facility",
+      "description": "Aerial view of the second facility.",
+      "media_type": "photo",
+      "media_url": "/media/aerial%201.webp",
+      "captured_at": "2026-01-12T02:30:00Z",
+      "uploaded_by": "R. Lopez",
+      "created_at": "2026-01-12T02:30:00Z",
+      "updated_at": "2026-01-12T02:30:00Z"
+    }
+  },
+  {
+    "model": "core.mediaitem",
+    "pk": "media-003",
+    "fields": {
+      "project": "proj-nb-001",
+      "title": "North Brisbane - Aerial view of first facility",
+      "description": "Aerial view of the first facility.",
+      "media_type": "photo",
+      "media_url": "/media/aerial%203.jpg",
+      "captured_at": "2026-01-17T00:00:00Z",
+      "uploaded_by": "System",
+      "created_at": "2026-01-17T00:00:00Z",
+      "updated_at": "2026-01-17T00:00:00Z"
+    }
+  }
+]

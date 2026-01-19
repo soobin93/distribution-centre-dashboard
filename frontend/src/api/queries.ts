@@ -4,7 +4,7 @@ import {
   getApprovals,
   getBudgets,
   getDocuments,
-  getMediaUpdates,
+  getMediaItems,
   getMilestones,
   getProgramSummary,
   getProjects,
@@ -32,8 +32,8 @@ export const useRfis = (projectId?: string) =>
 export const useDocuments = (projectId?: string) =>
   useQuery({ queryKey: ['documents', projectId ?? 'all'], queryFn: () => getDocuments(projectId) })
 
-export const useMediaUpdates = (projectId?: string) =>
-  useQuery({ queryKey: ['media', projectId ?? 'all'], queryFn: () => getMediaUpdates(projectId) })
+export const useMediaItems = (projectId?: string) =>
+  useQuery({ queryKey: ['media-items', projectId ?? 'all'], queryFn: () => getMediaItems(projectId) })
 
 export const useApprovals = (projectId?: string) =>
   useQuery({ queryKey: ['approvals', projectId ?? 'all'], queryFn: () => getApprovals(projectId) })

@@ -1,4 +1,4 @@
-export type MediaUpdate = {
+export type MediaItem = {
   id: string
   project_id: string
   title: string

@@ -4,7 +4,7 @@ from core.features.activity.models import ActivityLog
 from core.features.approvals.models import Approval
 from core.features.budgets.models import BudgetItem
 from core.features.documents.models import Document
-from core.features.media_updates.models import MediaUpdate
+from core.features.media_items.models import MediaItem
 from core.features.milestones.models import Milestone
 from core.features.projects.models import Project
 from core.features.rfis.models import Rfi
@@ -53,8 +53,8 @@ class DocumentAdmin(admin.ModelAdmin):
     search_fields = ('title', 'project__name')
 
 
-@admin.register(MediaUpdate)
-class MediaUpdateAdmin(admin.ModelAdmin):
+@admin.register(MediaItem)
+class MediaItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'media_type', 'captured_at', 'uploaded_by')
     list_filter = ('media_type',)
     search_fields = ('title', 'project__name')

@@ -5,7 +5,7 @@ import type { Milestone } from '@/features/milestones/types'
 import type { Risk } from '@/features/risks/types'
 import type { Rfi } from '@/features/rfis/types'
 import type { Document } from '@/features/documents/types'
-import type { MediaUpdate } from '@/features/media_updates/types'
+import type { MediaItem } from '@/features/media_items/types'
 import type { Approval } from '@/features/approvals/types'
 import type { ActivityLog } from '@/features/activity/types'
 
@@ -46,9 +46,9 @@ export const getDocuments = async (projectId?: string) => {
   return unwrapResults(payload)
 }
 
-export const getMediaUpdates = async (projectId?: string) => {
-  const query = projectId ? `media-updates?project_id=${encodeURIComponent(projectId)}` : 'media-updates'
-  const payload = await fetchJson<MediaUpdate[] | { results: MediaUpdate[] }>(query)
+export const getMediaItems = async (projectId?: string) => {
+  const query = projectId ? `media-items?project_id=${encodeURIComponent(projectId)}` : 'media-items'
+  const payload = await fetchJson<MediaItem[] | { results: MediaItem[] }>(query)
   return unwrapResults(payload)
 }
 

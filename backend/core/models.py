@@ -4,7 +4,7 @@ from core.features.milestones.models import Milestone
 from core.features.risks.models import Risk
 from core.features.rfis.models import Rfi
 from core.features.documents.models import Document
-from core.features.media_updates.models import MediaUpdate
+from core.features.media_items.models import MediaItem
 from core.features.approvals.models import Approval
 from core.features.activity.models import ActivityLog
 
@@ -15,7 +15,7 @@ __all__ = [
     'Risk',
     'Rfi',
     'Document',
-    'MediaUpdate',
+    'MediaItem',
     'Approval',
     'ActivityLog',
 ]
