@@ -163,9 +163,17 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173').split(',')
 
-CSRF_COOKIE_SAMESITE = 'Lax'
+def normalise_samesite(value: str) -> str:
+    if value.lower() == 'none':
+        return 'None'
+    if value.lower() == 'strict':
+        return 'Strict'
+    return 'Lax'
+
+
+CSRF_COOKIE_SAMESITE = normalise_samesite(os.environ.get('CSRF_COOKIE_SAMESITE', 'Lax'))
 CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'false').lower() == 'true'
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = normalise_samesite(os.environ.get('SESSION_COOKIE_SAMESITE', 'Lax'))
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
 
 REST_FRAMEWORK = {
