@@ -487,7 +487,6 @@ const ProjectWorkspacePage = () => {
             const approving = approveMutation.isPending && approveMutation.variables === item.id
             const rejecting = rejectMutation.isPending && rejectMutation.variables === item.id
             const reopening = submitMutation.isPending && submitMutation.variables === item.id
-            const rowBusy = approving || rejecting || reopening
             return (
             <div className="table__row" key={item.id}>
               <div>
