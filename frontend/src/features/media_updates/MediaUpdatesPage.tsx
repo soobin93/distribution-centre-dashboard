@@ -16,8 +16,8 @@ const MediaUpdatesPage = () => {
       <section className="page">
         <div className="page__header">
           <div>
-            <h1>Media Updates</h1>
-            <p className="page__subtitle">Loading media updates.</p>
+            <h1>Media Library</h1>
+            <p className="page__subtitle">Loading media library.</p>
           </div>
         </div>
         <Spinner label="Loading media" />
@@ -30,8 +30,8 @@ const MediaUpdatesPage = () => {
       <section className="page">
         <div className="page__header">
           <div>
-            <h1>Media Updates</h1>
-            <p className="page__subtitle">Media data could not be loaded.</p>
+            <h1>Media Library</h1>
+            <p className="page__subtitle">Media library data could not be loaded.</p>
           </div>
         </div>
         <div className="notice">Please try again shortly.</div>
@@ -43,7 +43,7 @@ const MediaUpdatesPage = () => {
     <section className="page">
       <div className="page__header">
         <div>
-          <h1>Media Updates</h1>
+          <h1>Media Library</h1>
           <p className="page__subtitle">
             Photo gallery and live camera placeholders across project sites.
           </p>
