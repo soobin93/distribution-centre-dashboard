@@ -10,7 +10,8 @@ const actionTone = (action: string) => {
 }
 
 const ActivityPage = () => {
-  const { data: items = [], isLoading: loading, isError } = useActivityLogs()
+  const { data: payload, isLoading: loading, isError } = useActivityLogs()
+  const items = payload?.results ?? []
 
   if (loading) {
     return (
@@ -64,9 +65,9 @@ const ActivityPage = () => {
               </div>
               <div className="subtle">Entity: {log.entity_id}</div>
               <div className="activity__meta">
-                {Object.entries(log.metadata).map(([key, value]) => (
+                {Object.entries(log.metadata ?? {}).map(([key, value]) => (
                   <span key={key}>
-                    {key}: {value}
+                    {key}: {String(value)}
                   </span>
                 ))}
               </div>
