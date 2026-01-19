@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import StatCard from '@/components/StatCard'
 import Badge from '@/components/Badge'
+import { SkeletonCard } from '@/components/Skeleton'
 import { BarChart, DonutChart } from '@/components/Charts'
-import Spinner from '@/components/Spinner'
 import { useProgramSummary, useProjects } from '@/api/queries'
 
 const formatCurrency = (value: number) =>
@@ -20,20 +20,6 @@ const ProgramSummaryPage = () => {
     isError: projectsError,
   } = useProjects()
 
-  if ((loadingSummary && loadingProjects) || (!summary && loadingSummary)) {
-    return (
-      <section className="page">
-        <div className="page__header">
-          <div>
-            <h1>Program Summary</h1>
-            <p className="page__subtitle">Loading program insights.</p>
-          </div>
-        </div>
-        <Spinner label="Loading summary" />
-      </section>
-    )
-  }
-
   return (
     <section className="page">
       <div className="page__header">
@@ -49,7 +35,13 @@ const ProgramSummaryPage = () => {
         </div>
       </div>
 
-      {summary ? (
+      {loadingSummary ? (
+        <div className="grid grid--stats">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <SkeletonCard key={`summary-stat-${index}`} />
+          ))}
+        </div>
+      ) : summary ? (
         <div className="grid grid--stats">
           <StatCard
             label="Total Budget"
@@ -83,7 +75,13 @@ const ProgramSummaryPage = () => {
           <h2>Project Health Snapshot</h2>
           <span className="section__meta">2 workspaces</span>
         </div>
-        {projectsError ? (
+        {loadingProjects ? (
+          <div className="grid grid--cards">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <SkeletonCard key={`project-skeleton-${index}`} />
+            ))}
+          </div>
+        ) : projectsError ? (
           <div className="notice">Project list is unavailable. Please retry.</div>
         ) : (
           <div className="grid grid--cards">
@@ -124,7 +122,13 @@ const ProgramSummaryPage = () => {
           <h2>Program Insights</h2>
           <span className="section__meta">Executive view</span>
         </div>
-        {summary ? (
+        {loadingSummary ? (
+          <div className="grid grid--split">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={`insight-skeleton-${index}`} />
+            ))}
+          </div>
+        ) : summary ? (
           <div className="grid grid--split">
             <div className="card card--light">
               <h3>Budget mix</h3>

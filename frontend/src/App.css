@@ -471,6 +471,67 @@
   flex-wrap: wrap;
 }
 
+.skeleton {
+  background: linear-gradient(90deg, #eef2f7 0%, #e2e8f0 50%, #eef2f7 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.2s ease-in-out infinite;
+}
+
+.skeleton-line {
+  display: inline-block;
+  height: 12px;
+  border-radius: 999px;
+  width: 100%;
+}
+
+.skeleton-wide {
+  width: 70%;
+}
+
+.skeleton-narrow {
+  width: 40%;
+}
+
+.skeleton-title {
+  width: 280px;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton-subtitle {
+  width: 220px;
+  height: 14px;
+}
+
+.skeleton-meta {
+  width: 90px;
+  height: 12px;
+}
+
+.skeleton-pill {
+  width: 74px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.skeleton-card {
+  min-height: 84px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #eef2f7 0%, #e2e8f0 50%, #eef2f7 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.2s ease-in-out infinite;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+@keyframes skeleton-shine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .table__badge {
   display: flex;
   align-items: center;
@@ -495,6 +556,10 @@
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .pagination__controls {
@@ -513,6 +578,26 @@
 .pagination__page.is-active {
   background: rgba(42, 24, 96, 0.12);
   border-color: rgba(42, 24, 96, 0.35);
+}
+
+.pagination__page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pagination__page-size select {
+  border-radius: 999px;
+  border: 1px solid rgba(42, 24, 96, 0.3);
+  background: #fff;
+  color: #2a1860;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  text-transform: uppercase;
 }
 
 .inline-spinner {

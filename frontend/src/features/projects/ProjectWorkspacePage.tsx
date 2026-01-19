@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import Badge from '@/components/Badge'
 import StatCard from '@/components/StatCard'
-import Spinner from '@/components/Spinner'
+import { SkeletonCard, SkeletonLine, SkeletonPill } from '@/components/Skeleton'
 import {
   useActivityLogs,
   useApprovals,
@@ -63,10 +63,51 @@ const formatDate = (value?: string | null) => {
 const resolveProjectId = (item: { project_id?: string; project?: string }) =>
   item.project_id ?? item.project ?? ''
 
+type SkeletonTableProps = {
+  headers: string[]
+  rows?: number
+  className?: string
+  badgeIndex?: number
+}
+
+const SkeletonTable = ({ headers, rows = 3, className = '', badgeIndex }: SkeletonTableProps) => (
+  <div className={`table ${className}`.trim()}>
+    <div className="table__header">
+      {headers.map((header) => (
+        <span key={header}>{header}</span>
+      ))}
+    </div>
+    {Array.from({ length: rows }).map((_, rowIndex) => (
+      <div className="table__row" key={`skeleton-row-${rowIndex}`}>
+        {headers.map((_, colIndex) => {
+          if (colIndex === 0) {
+            return (
+              <div key={`cell-${rowIndex}-${colIndex}`}>
+                <SkeletonLine className="skeleton-wide" />
+                <SkeletonLine className="skeleton-narrow" />
+              </div>
+            )
+          }
+          if (badgeIndex === colIndex) {
+            return (
+              <div className="table__badge" key={`cell-${rowIndex}-${colIndex}`}>
+                <SkeletonPill />
+              </div>
+            )
+          }
+          return <SkeletonLine key={`cell-${rowIndex}-${colIndex}`} />
+        })}
+      </div>
+    ))}
+  </div>
+)
+
 const ProjectWorkspacePage = () => {
   const { projectId } = useParams()
   const queryClient = useQueryClient()
   const [activityPage, setActivityPage] = useState(1)
+  const [activityPageSize, setActivityPageSize] = useState(10)
+  const activityFetchSize = 1000
   const [approvalAction, setApprovalAction] = useState<{
     id: string
     type: 'approve' | 'reject' | 'reopen'
@@ -89,12 +130,20 @@ const ProjectWorkspacePage = () => {
     isLoading: loadingActivity,
     isError: activityError,
     isFetching: activityFetching,
-  } = useActivityLogs(projectId, activityPage)
+  } = useActivityLogs(projectId, 1, activityFetchSize)
   const activityItems = useMemo(() => activityPayload?.results ?? [], [activityPayload])
+  const activityFiltered = useMemo(
+    () => activityItems.filter((item) => resolveProjectId(item) === projectId),
+    [activityItems, projectId],
+  )
   const activityTotalPages = useMemo(() => {
-    if (!activityPayload) return 1
-    return Math.max(1, Math.ceil(activityPayload.count / 20))
-  }, [activityPayload])
+    if (activityFiltered.length === 0) return 1
+    return Math.max(1, Math.ceil(activityFiltered.length / activityPageSize))
+  }, [activityFiltered.length, activityPageSize])
+  const activityPageItems = useMemo(() => {
+    const start = (activityPage - 1) * activityPageSize
+    return activityFiltered.slice(start, start + activityPageSize)
+  }, [activityFiltered, activityPage, activityPageSize])
   const activityPageWindow = useMemo(() => {
     const windowSize = 5
     let start = Math.max(1, activityPage - 2)
@@ -105,7 +154,9 @@ const ProjectWorkspacePage = () => {
   const approvalActionBusyRefetch = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['approvals', projectId ?? 'all'] }),
-      queryClient.invalidateQueries({ queryKey: ['activity', projectId ?? 'all', activityPage] }),
+      queryClient.invalidateQueries({
+        queryKey: ['activity', projectId ?? 'all', 1, activityFetchSize],
+      }),
     ])
   }
   const approveMutation = useMutation({
@@ -141,16 +192,6 @@ const ProjectWorkspacePage = () => {
     submitMutation.isPending ||
     approvalsFetching ||
     activityFetching
-  const loading =
-    loadingProjects ||
-    loadingBudgets ||
-    loadingMilestones ||
-    loadingRisks ||
-    loadingRfis ||
-    loadingDocuments ||
-    loadingMedia ||
-    loadingApprovals ||
-    loadingActivity
 
   const projectBudgets = useMemo(
     () => budgets.filter((item) => resolveProjectId(item) === projectId),
@@ -180,26 +221,9 @@ const ProjectWorkspacePage = () => {
     () => approvalItems.filter((item) => resolveProjectId(item) === projectId),
     [approvalItems, projectId],
   )
-  const projectActivity = useMemo(
-    () => activityItems.filter((item) => resolveProjectId(item) === projectId),
-    [activityItems, projectId],
-  )
+  const projectActivity = activityPageItems
 
   const project = projects.find((item) => item.id === projectId)
-
-  if (loading) {
-    return (
-      <section className="page">
-        <div className="page__header">
-          <div>
-            <h1>Loading workspace</h1>
-            <p className="page__subtitle">Fetching project data.</p>
-          </div>
-        </div>
-        <Spinner label="Loading workspace" />
-      </section>
-    )
-  }
 
   if (!project && projectsError) {
     return (
@@ -215,7 +239,7 @@ const ProjectWorkspacePage = () => {
     )
   }
 
-  if (!project) {
+  if (!project && !loadingProjects) {
     return (
       <section className="page">
         <div className="page__header">
@@ -249,25 +273,55 @@ const ProjectWorkspacePage = () => {
       <div className="workspace__header">
         <div>
           <div className="workspace__eyebrow">Workspace</div>
-          <h1>{project.name}</h1>
-          <p className="page__subtitle">{project.location}</p>
+          {project ? (
+            <>
+              <h1>{project.name}</h1>
+              <p className="page__subtitle">{project.location}</p>
+            </>
+          ) : (
+            <>
+              <div className="skeleton skeleton-line skeleton-title" />
+              <div className="skeleton skeleton-line skeleton-subtitle" />
+            </>
+          )}
         </div>
-        <div className="workspace__meta">
-          <Badge label={project.status.replace('_', ' ')} tone="info" />
-          <span>{project.phase ?? 'Phase TBD'}</span>
-          <span>Target: {project.end_date}</span>
-        </div>
+        {project ? (
+          <div className="workspace__meta">
+            <Badge label={project.status.replace('_', ' ')} tone="info" />
+            <span>{project.phase ?? 'Phase TBD'}</span>
+            <span>Target: {project.end_date}</span>
+          </div>
+        ) : (
+          <div className="workspace__meta">
+            <div className="skeleton skeleton-pill" />
+            <div className="skeleton skeleton-line skeleton-meta" />
+            <div className="skeleton skeleton-line skeleton-meta" />
+          </div>
+        )}
       </div>
 
-      <div className="grid grid--stats">
-        <StatCard label="Original Budget" value={formatCurrency(budgetTotals.original, 'AUD')} helper="Baseline" />
-        <StatCard label="Variations" value={formatCurrency(budgetTotals.variations, 'AUD')} helper="Approved" />
-        <StatCard label="Forecast" value={formatCurrency(budgetTotals.forecast, 'AUD')} helper="Current" />
-        <StatCard label="Actuals" value={formatCurrency(budgetTotals.actual, 'AUD')} helper="To date" />
-        <StatCard label="Milestones" value={`${milestoneDone}/${projectMilestones.length}`} helper="Completed" />
-        <StatCard label="Open Items" value={`${openRisks + openRfis}`} helper="Risks + RFIs" />
-        <StatCard label="Pending Approvals" value={`${pendingApprovals}`} helper="Awaiting review" />
-      </div>
+      {(loadingBudgets ||
+        loadingMilestones ||
+        loadingRisks ||
+        loadingRfis ||
+        loadingApprovals ||
+        !project) ? (
+        <div className="grid grid--stats">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <SkeletonCard key={`workspace-stat-${index}`} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid--stats">
+          <StatCard label="Original Budget" value={formatCurrency(budgetTotals.original, 'AUD')} helper="Baseline" />
+          <StatCard label="Variations" value={formatCurrency(budgetTotals.variations, 'AUD')} helper="Approved" />
+          <StatCard label="Forecast" value={formatCurrency(budgetTotals.forecast, 'AUD')} helper="Current" />
+          <StatCard label="Actuals" value={formatCurrency(budgetTotals.actual, 'AUD')} helper="To date" />
+          <StatCard label="Milestones" value={`${milestoneDone}/${projectMilestones.length}`} helper="Completed" />
+          <StatCard label="Open Items" value={`${openRisks + openRfis}`} helper="Risks + RFIs" />
+          <StatCard label="Pending Approvals" value={`${pendingApprovals}`} helper="Awaiting review" />
+        </div>
+      )}
 
       <div className="workspace__nav">
         <a className="workspace__link" href="#budgets">
@@ -301,7 +355,12 @@ const ProjectWorkspacePage = () => {
           <h2>Budget tracking</h2>
           <span className="section__meta">{projectBudgets.length} categories</span>
         </div>
-        {budgetsError ? (
+        {loadingBudgets ? (
+          <SkeletonTable
+            headers={['Category', 'Original', 'Variations', 'Forecast', 'Actual', 'Status']}
+            rows={3}
+          />
+        ) : budgetsError ? (
           <div className="notice">Budget data is unavailable.</div>
         ) : (
           <div className="table">
@@ -335,7 +394,13 @@ const ProjectWorkspacePage = () => {
           <h2>Timeline & milestones</h2>
           <span className="section__meta">Planned vs actual</span>
         </div>
-        {milestonesError ? (
+        {loadingMilestones ? (
+          <SkeletonTable
+            headers={['Milestone', 'Planned', 'Actual', 'Complete', 'Status']}
+            rows={3}
+            className="table--five"
+          />
+        ) : milestonesError ? (
           <div className="notice">Milestone data is unavailable.</div>
         ) : (
           <div className="table table--five">
@@ -367,7 +432,13 @@ const ProjectWorkspacePage = () => {
           <h2>Risk register</h2>
           <span className="section__meta">{openRisks} open</span>
         </div>
-        {risksError ? (
+        {loadingRisks ? (
+          <SkeletonTable
+            headers={['Risk', 'Category', 'Rating', 'Owner', 'Status']}
+            rows={3}
+            className="table--five"
+          />
+        ) : risksError ? (
           <div className="notice">Risk data is unavailable.</div>
         ) : (
           <div className="table table--five">
@@ -399,7 +470,14 @@ const ProjectWorkspacePage = () => {
           <h2>RFIs</h2>
           <span className="section__meta">{openRfis} open</span>
         </div>
-        {rfisError ? (
+        {loadingRfis ? (
+          <SkeletonTable
+            headers={['RFI', 'Status', 'Raised by', 'Due', 'Response']}
+            rows={3}
+            className="table--five"
+            badgeIndex={1}
+          />
+        ) : rfisError ? (
           <div className="notice">RFI data is unavailable.</div>
         ) : (
           <div className="table table--five">
@@ -431,7 +509,13 @@ const ProjectWorkspacePage = () => {
           <h2>Documents</h2>
           <span className="section__meta">{projectDocuments.length} files</span>
         </div>
-        {documentsError ? (
+        {loadingDocuments ? (
+          <SkeletonTable
+            headers={['Document', 'Type', 'Version', 'Status', 'Owner']}
+            rows={3}
+            className="table--five"
+          />
+        ) : documentsError ? (
           <div className="notice">Document data is unavailable.</div>
         ) : (
           <div className="table table--five">
@@ -463,7 +547,13 @@ const ProjectWorkspacePage = () => {
         <h2>Media Library</h2>
         <span className="section__meta">{projectMedia.length} items</span>
         </div>
-        {mediaError ? (
+        {loadingMedia ? (
+          <div className="grid grid--media">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard className="media-card" key={`media-skeleton-${index}`} />
+            ))}
+          </div>
+        ) : mediaError ? (
           <div className="notice">Media library items are unavailable.</div>
         ) : (
           <div className="grid grid--media">
@@ -503,7 +593,14 @@ const ProjectWorkspacePage = () => {
           <h2>Approvals workflow</h2>
           <span className="section__meta">{pendingApprovals} pending</span>
         </div>
-        {approvalsError ? (
+        {loadingApprovals ? (
+          <SkeletonTable
+            headers={['Item', 'Status', 'Requested by', 'Reviewed by', 'Decision', 'Actions']}
+            rows={3}
+            className="table--approvals"
+            badgeIndex={1}
+          />
+        ) : approvalsError ? (
           <div className="notice">Approval data is unavailable.</div>
         ) : (
           <div className="table table--approvals">
@@ -579,8 +676,12 @@ const ProjectWorkspacePage = () => {
         </div>
         {activityError ? (
           <div className="notice">Activity log is unavailable.</div>
-        ) : loadingActivity ? (
-          <Spinner label="Loading activity log" />
+        ) : loadingActivity || activityFetching ? (
+          <SkeletonTable
+            headers={['Actor', 'Action', 'Entity', 'Reference', 'Date']}
+            rows={3}
+            className="table--five"
+          />
         ) : (
           <div className="table table--five">
           <div className="table__header">
@@ -606,26 +707,35 @@ const ProjectWorkspacePage = () => {
               <span>{formatDate(item.created_at)}</span>
             </div>
           ))}
-          {activityFetching ? (
-            <div className="table__row">
-              <div>
-                <span className="inline-spinner" aria-hidden="true" />
-                <span className="subtle">Updating activity…</span>
-              </div>
-            </div>
-          ) : null}
           </div>
         )}
         {!activityError && activityPayload ? (
           <div className="pagination">
             <div className="pagination__meta">
-              Page {activityPage} of {activityTotalPages}
+              <span>
+                Page {activityPage} of {activityTotalPages}
+              </span>
+              <label className="pagination__page-size">
+                Show
+                <select
+                  value={activityPageSize}
+                  onChange={(event) => {
+                    setActivityPageSize(Number(event.target.value))
+                    setActivityPage(1)
+                  }}
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+                per page
+              </label>
             </div>
             <div className="pagination__controls">
               <button
                 className="link-button"
                 type="button"
-                disabled={activityPage === 1 || activityFetching}
+                disabled={activityPage === 1}
                 onClick={() => setActivityPage(1)}
               >
                 First
@@ -633,7 +743,7 @@ const ProjectWorkspacePage = () => {
               <button
                 className="link-button"
                 type="button"
-                disabled={activityPage === 1 || activityFetching}
+                disabled={activityPage === 1}
                 onClick={() => setActivityPage((prev) => Math.max(1, prev - 1))}
               >
                 Previous
@@ -643,7 +753,7 @@ const ProjectWorkspacePage = () => {
                   key={page}
                   className={`link-button pagination__page${page === activityPage ? ' is-active' : ''}`}
                   type="button"
-                  disabled={activityFetching}
+                  disabled={false}
                   onClick={() => setActivityPage(page)}
                 >
                   {page}
@@ -652,7 +762,7 @@ const ProjectWorkspacePage = () => {
               <button
                 className="link-button"
                 type="button"
-                disabled={activityPage === activityTotalPages || activityFetching}
+                disabled={activityPage === activityTotalPages}
                 onClick={() => setActivityPage((prev) => Math.min(activityTotalPages, prev + 1))}
               >
                 Next
@@ -660,7 +770,7 @@ const ProjectWorkspacePage = () => {
               <button
                 className="link-button"
                 type="button"
-                disabled={activityPage === activityTotalPages || activityFetching}
+                disabled={activityPage === activityTotalPages}
                 onClick={() => setActivityPage(activityTotalPages)}
               >
                 Last

@@ -101,10 +101,13 @@ export type PaginatedResponse<T> = {
   results: T[]
 }
 
-export const getActivityLogs = async (projectId?: string, page = 1) => {
+export const getActivityLogs = async (projectId?: string, page = 1, pageSize = 20) => {
   const params = new URLSearchParams()
   if (projectId) {
     params.set('project_id', projectId)
+  }
+  if (pageSize > 0) {
+    params.set('page_size', String(pageSize))
   }
   if (page > 1) {
     params.set('page', String(page))
