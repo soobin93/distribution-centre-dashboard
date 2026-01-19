@@ -7,6 +7,7 @@ import type { Rfi } from '@/features/rfis/types'
 import type { Document } from '@/features/documents/types'
 import type { MediaItem } from '@/features/media_items/types'
 import type { Approval } from '@/features/approvals/types'
+import { ensureCsrfToken } from '@/api/auth'
 import type { ActivityLog } from '@/features/activity/types'
 
 export const getProgramSummary = async () => fetchJson<ProgramSummary>('summary')
@@ -56,6 +57,41 @@ export const getApprovals = async (projectId?: string) => {
   const query = projectId ? `approvals?project_id=${encodeURIComponent(projectId)}` : 'approvals'
   const payload = await fetchJson<Approval[] | { results: Approval[] }>(query)
   return unwrapResults(payload)
+}
+
+export const approveApproval = async (approvalId: string, decisionNote = '') => {
+  const csrfToken = await ensureCsrfToken()
+  return fetchJson<Approval>(`approvals/${approvalId}/approve`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({ decision_note: decisionNote }),
+  })
+}
+
+export const rejectApproval = async (approvalId: string, decisionNote = '') => {
+  const csrfToken = await ensureCsrfToken()
+  return fetchJson<Approval>(`approvals/${approvalId}/reject`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({ decision_note: decisionNote }),
+  })
+}
+
+export const submitApproval = async (approvalId: string) => {
+  const csrfToken = await ensureCsrfToken()
+  return fetchJson<Approval>(`approvals/${approvalId}/submit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+  })
 }
 
 export const getActivityLogs = async (projectId?: string) => {

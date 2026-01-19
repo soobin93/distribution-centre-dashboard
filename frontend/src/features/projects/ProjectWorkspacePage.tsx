@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import Badge from '@/components/Badge'
 import StatCard from '@/components/StatCard'
@@ -14,6 +15,7 @@ import {
   useRfis,
   useRisks,
 } from '@/api/queries'
+import { approveApproval, rejectApproval, submitApproval } from '@/api/program'
 
 const formatCurrency = (value: number | string, currency: string) =>
   new Intl.NumberFormat('en-AU', {
@@ -63,6 +65,7 @@ const resolveProjectId = (item: { project_id?: string; project?: string }) =>
 
 const ProjectWorkspacePage = () => {
   const { projectId } = useParams()
+  const queryClient = useQueryClient()
   const { data: projects = [], isLoading: loadingProjects, isError: projectsError } = useProjects()
   const { data: budgets = [], isLoading: loadingBudgets, isError: budgetsError } = useBudgets(projectId)
   const { data: milestoneItems = [], isLoading: loadingMilestones, isError: milestonesError } = useMilestones(projectId)
@@ -70,8 +73,42 @@ const ProjectWorkspacePage = () => {
   const { data: rfiItems = [], isLoading: loadingRfis, isError: rfisError } = useRfis(projectId)
   const { data: documentItems = [], isLoading: loadingDocuments, isError: documentsError } = useDocuments(projectId)
   const { data: mediaItems = [], isLoading: loadingMedia, isError: mediaError } = useMediaItems(projectId)
-  const { data: approvalItems = [], isLoading: loadingApprovals, isError: approvalsError } = useApprovals(projectId)
-  const { data: activityItems = [], isLoading: loadingActivity, isError: activityError } = useActivityLogs(projectId)
+  const {
+    data: approvalItems = [],
+    isLoading: loadingApprovals,
+    isError: approvalsError,
+    isFetching: approvalsFetching,
+  } = useApprovals(projectId)
+  const {
+    data: activityItems = [],
+    isLoading: loadingActivity,
+    isError: activityError,
+    isFetching: activityFetching,
+  } = useActivityLogs(projectId)
+  const approvalActionBusyRefetch = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['approvals', projectId ?? 'all'] }),
+      queryClient.invalidateQueries({ queryKey: ['activity', projectId ?? 'all'] }),
+    ])
+  }
+  const approveMutation = useMutation({
+    mutationFn: (approvalId: string) => approveApproval(approvalId),
+    onSuccess: approvalActionBusyRefetch,
+  })
+  const rejectMutation = useMutation({
+    mutationFn: (approvalId: string) => rejectApproval(approvalId),
+    onSuccess: approvalActionBusyRefetch,
+  })
+  const submitMutation = useMutation({
+    mutationFn: (approvalId: string) => submitApproval(approvalId),
+    onSuccess: approvalActionBusyRefetch,
+  })
+  const approvalsUpdating =
+    approveMutation.isPending ||
+    rejectMutation.isPending ||
+    submitMutation.isPending ||
+    approvalsFetching ||
+    activityFetching
   const loading =
     loadingProjects ||
     loadingBudgets ||
@@ -437,15 +474,21 @@ const ProjectWorkspacePage = () => {
         {approvalsError ? (
           <div className="notice">Approval data is unavailable.</div>
         ) : (
-          <div className="table table--five">
+          <div className="table table--approvals">
           <div className="table__header">
             <span>Item</span>
             <span>Status</span>
             <span>Requested by</span>
             <span>Reviewed by</span>
             <span>Decision</span>
+            <span>Actions</span>
           </div>
-          {projectApprovals.map((item) => (
+          {projectApprovals.map((item) => {
+            const approving = approveMutation.isPending && approveMutation.variables === item.id
+            const rejecting = rejectMutation.isPending && rejectMutation.variables === item.id
+            const reopening = submitMutation.isPending && submitMutation.variables === item.id
+            const rowBusy = approving || rejecting || reopening
+            return (
             <div className="table__row" key={item.id}>
               <div>
                 <strong>{item.entity_type}</strong>
@@ -454,9 +497,65 @@ const ProjectWorkspacePage = () => {
               <Badge label={item.status} tone={approvalTone(item.status)} />
               <span>{item.requested_by}</span>
               <span>{item.reviewed_by ?? '—'}</span>
-              <span>{item.decision_note}</span>
+              <span>{item.decision_note || '—'}</span>
+              <div className="table__actions">
+                {item.status === 'pending' ? (
+                  <>
+                    <button
+                      className="link-button"
+                      type="button"
+                      disabled={approvalsUpdating}
+                      aria-busy={approving}
+                      onClick={() => approveMutation.mutate(item.id)}
+                    >
+                      {approving ? (
+                        <>
+                          <span className="inline-spinner" aria-hidden="true" />
+                          Approving
+                        </>
+                      ) : (
+                        'Approve'
+                      )}
+                    </button>
+                    <button
+                      className="link-button"
+                      type="button"
+                      disabled={approvalsUpdating}
+                      aria-busy={rejecting}
+                      onClick={() => rejectMutation.mutate(item.id)}
+                    >
+                      {rejecting ? (
+                        <>
+                          <span className="inline-spinner" aria-hidden="true" />
+                          Rejecting
+                        </>
+                      ) : (
+                        'Reject'
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="link-button"
+                    type="button"
+                    disabled={approvalsUpdating}
+                    aria-busy={reopening}
+                    onClick={() => submitMutation.mutate(item.id)}
+                  >
+                    {reopening ? (
+                      <>
+                        <span className="inline-spinner" aria-hidden="true" />
+                        Reopening
+                      </>
+                    ) : (
+                      'Reopen'
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
-          ))}
+            )
+          })}
           </div>
         )}
       </div>

@@ -4,7 +4,7 @@ from .models import ActivityLog
 from .serializers import ActivityLogSerializer
 
 
-class ActivityLogViewSet(viewsets.ModelViewSet):
+class ActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ActivityLog.objects.all()
     serializer_class = ActivityLogSerializer
 

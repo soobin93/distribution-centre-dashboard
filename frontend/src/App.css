@@ -434,6 +434,17 @@
   grid-template-columns: minmax(240px, 2fr) repeat(4, minmax(120px, 1fr));
 }
 
+.table--approvals .table__header,
+.table--approvals .table__row {
+  grid-template-columns:
+    minmax(240px, 2fr)
+    minmax(120px, 1fr)
+    minmax(140px, 1fr)
+    minmax(140px, 1fr)
+    minmax(160px, 1fr)
+    minmax(180px, 1.2fr);
+}
+
 .table__header {
   background: var(--slate-100);
   font-size: 10px;
@@ -452,6 +463,29 @@
 .subtle {
   color: var(--slate-500);
   font-size: 13px;
+}
+
+.table__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inline-spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(42, 24, 96, 0.25);
+  border-top-color: #2a1860;
+  display: inline-block;
+  animation: inline-spin 0.8s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes inline-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .notice {
