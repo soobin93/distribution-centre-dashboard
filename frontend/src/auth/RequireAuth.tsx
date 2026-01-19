@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import Spinner from '@/components/Spinner'
 import { useAuth } from '@/auth/AuthContext'
 
-const RequireAuth = ({ children }: { children: JSX.Element }) => {
+const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth()
   const location = useLocation()
 
@@ -18,7 +19,7 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
     return <Navigate to="/login" replace state={{ from: location }} />
   }
 
-  return children
+  return <>{children}</>
 }
 
 export default RequireAuth
