@@ -9,7 +9,7 @@ export type BudgetItem = {
   actual_spent: number
   currency: string
   cost_code: string
-  status: 'on_track' | 'at_risk' | 'over'
+  status: 'on_track' | 'at_risk' | 'off_track'
   created_at: string
   updated_at: string
 }

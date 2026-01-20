@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from core.features.common.models import TimeStampedModel
 from core.features.projects.models import Project
@@ -9,7 +10,10 @@ class BudgetItem(TimeStampedModel):
         AT_RISK = 'at_risk', 'At risk'
         OFF_TRACK = 'off_track', 'Off track'
 
-    id = models.CharField(max_length=32, primary_key=True)
+    def generate_id() -> str:
+        return f'bud-{uuid.uuid4().hex[:8]}'
+
+    id = models.CharField(max_length=32, primary_key=True, default=generate_id)
     project = models.ForeignKey(Project, related_name='budget_items', on_delete=models.CASCADE)
     category = models.CharField(max_length=120)
     description = models.TextField(blank=True)

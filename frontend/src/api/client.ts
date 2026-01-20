@@ -16,8 +16,12 @@ const getCookie = (name: string) => {
 }
 
 const csrfSafeMethods = new Set(['GET', 'HEAD', 'OPTIONS', 'TRACE'])
+let csrfTokenCache: string | null = null
 
 export const ensureCsrfToken = async () => {
+  if (csrfTokenCache) {
+    return csrfTokenCache
+  }
   const response = await fetch(`${API_BASE_URL}/${ensureTrailingSlash('auth/csrf')}`, {
     credentials: 'include',
   })
@@ -25,7 +29,11 @@ export const ensureCsrfToken = async () => {
     throw new Error(`Request failed: ${response.status}`)
   }
   const payload = (await response.json()) as { csrfToken?: string }
-  return payload?.csrfToken ?? getCookie('csrftoken')
+  const token = payload?.csrfToken ?? getCookie('csrftoken')
+  if (token) {
+    csrfTokenCache = token
+  }
+  return token
 }
 
 export const fetchJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
@@ -45,7 +53,14 @@ export const fetchJson = async <T>(path: string, init?: RequestInit): Promise<T>
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status}`)
   }
-  return response.json() as Promise<T>
+  if (response.status === 204) {
+    return undefined as T
+  }
+  const text = await response.text()
+  if (!text) {
+    return undefined as T
+  }
+  return JSON.parse(text) as T
 }
 
 export const unwrapResults = <T>(payload: Paginated<T> | T[]): T[] => {

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from core.features.common.models import TimeStampedModel
 from core.features.projects.models import Project
@@ -9,7 +10,10 @@ class Risk(TimeStampedModel):
         MITIGATING = 'mitigating', 'Mitigating'
         CLOSED = 'closed', 'Closed'
 
-    id = models.CharField(max_length=32, primary_key=True)
+    def generate_id() -> str:
+        return f'risk-{uuid.uuid4().hex[:8]}'
+
+    id = models.CharField(max_length=32, primary_key=True, default=generate_id)
     project = models.ForeignKey(Project, related_name='risks', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)

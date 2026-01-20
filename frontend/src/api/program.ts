@@ -22,6 +22,32 @@ export const getBudgets = async (projectId?: string) => {
   return unwrapResults(payload)
 }
 
+export type BudgetItemInput = Omit<BudgetItem, 'id' | 'created_at' | 'updated_at'>
+
+const toBudgetPayload = ({ project_id, ...rest }: BudgetItemInput) => ({
+  ...rest,
+  project: project_id,
+})
+
+export const createBudget = async (payload: BudgetItemInput) =>
+  fetchJson<BudgetItem>('budgets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toBudgetPayload(payload)),
+  })
+
+export const updateBudget = async (id: string, payload: BudgetItemInput) =>
+  fetchJson<BudgetItem>(`budgets/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toBudgetPayload(payload)),
+  })
+
+export const deleteBudget = async (id: string) =>
+  fetchJson<void>(`budgets/${id}`, {
+    method: 'DELETE',
+  })
+
 export const getMilestones = async (projectId?: string) => {
   const query = projectId ? `milestones?project_id=${encodeURIComponent(projectId)}` : 'milestones'
   const payload = await fetchJson<Milestone[] | { results: Milestone[] }>(query)
@@ -34,11 +60,63 @@ export const getRisks = async (projectId?: string) => {
   return unwrapResults(payload)
 }
 
+export type RiskInput = Omit<Risk, 'id' | 'created_at' | 'updated_at'>
+
+const toRiskPayload = ({ project_id, ...rest }: RiskInput) => ({
+  ...rest,
+  project: project_id,
+})
+
+export const createRisk = async (payload: RiskInput) =>
+  fetchJson<Risk>('risks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toRiskPayload(payload)),
+  })
+
+export const updateRisk = async (id: string, payload: RiskInput) =>
+  fetchJson<Risk>(`risks/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toRiskPayload(payload)),
+  })
+
+export const deleteRisk = async (id: string) =>
+  fetchJson<void>(`risks/${id}`, {
+    method: 'DELETE',
+  })
+
 export const getRfis = async (projectId?: string) => {
   const query = projectId ? `rfis?project_id=${encodeURIComponent(projectId)}` : 'rfis'
   const payload = await fetchJson<Rfi[] | { results: Rfi[] }>(query)
   return unwrapResults(payload)
 }
+
+export type RfiInput = Omit<Rfi, 'id' | 'created_at' | 'updated_at'>
+
+const toRfiPayload = ({ project_id, ...rest }: RfiInput) => ({
+  ...rest,
+  project: project_id,
+})
+
+export const createRfi = async (payload: RfiInput) =>
+  fetchJson<Rfi>('rfis', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toRfiPayload(payload)),
+  })
+
+export const updateRfi = async (id: string, payload: RfiInput) =>
+  fetchJson<Rfi>(`rfis/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(toRfiPayload(payload)),
+  })
+
+export const deleteRfi = async (id: string) =>
+  fetchJson<void>(`rfis/${id}`, {
+    method: 'DELETE',
+  })
 
 export const getDocuments = async (projectId?: string) => {
   const query = projectId ? `documents?project_id=${encodeURIComponent(projectId)}` : 'documents'
