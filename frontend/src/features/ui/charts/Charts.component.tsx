@@ -1,4 +1,4 @@
-import '@/components/Charts.css'
+import '@/features/ui/charts/Charts.component.css'
 
 type DonutChartProps = {
   value: number

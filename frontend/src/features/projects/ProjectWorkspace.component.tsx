@@ -1,10 +1,24 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
-import Badge from '@/components/Badge'
-import StatCard from '@/components/StatCard'
-import { SkeletonCard, SkeletonLine, SkeletonPill } from '@/components/Skeleton'
-import Drawer from '@/components/Drawer'
+import Badge from '@/features/ui/badge/Badge.component'
+import StatCard from '@/features/ui/stat-card/StatCard.component'
+import { SkeletonCard, SkeletonLine, SkeletonPill } from '@/features/ui/skeleton/Skeleton.component'
+import Drawer from '@/features/ui/drawer/Drawer.component'
+import {
+  approvalTone,
+  budgetStatusTone,
+  formatCurrency,
+  formatDate,
+  formatDateTime,
+  mediaTone,
+  milestoneTone,
+  rfiTone,
+  resolveProjectId,
+  toDateInput,
+  toDateTimeInput,
+  toDateTimePayload,
+} from '@/features/projects/ProjectWorkspace.utils'
 import {
   useActivityLogs,
   useApprovals,
@@ -30,81 +44,11 @@ import {
   updateRisk,
   rejectApproval,
 } from '@/api/program'
-import type { BudgetItem } from '@/features/budgets/types'
-import type { Risk } from '@/features/risks/types'
-import type { Rfi } from '@/features/rfis/types'
+import type { BudgetItem } from '@/features/budgets/Budgets.component.types'
+import type { Risk } from '@/features/risks/Risks.component.types'
+import type { Rfi } from '@/features/rfis/Rfis.component.types'
 import type { BudgetItemInput, RiskInput, RfiInput } from '@/api/program'
 
-const formatCurrency = (value: number | string, currency: string) =>
-  new Intl.NumberFormat('en-AU', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(Number(value))
-
-const budgetStatusTone = (status: string) => {
-  if (status === 'on_track') return 'success'
-  if (status === 'at_risk') return 'warning'
-  return 'danger'
-}
-
-const milestoneTone = (status: string) => {
-  if (status === 'done') return 'success'
-  if (status === 'in_progress') return 'info'
-  return 'warning'
-}
-
-const rfiTone = (status: string) => {
-  if (status === 'answered') return 'success'
-  if (status === 'open') return 'warning'
-  return 'neutral'
-}
-
-const approvalTone = (status: string) => {
-  if (status === 'approved') return 'success'
-  if (status === 'pending') return 'warning'
-  return 'danger'
-}
-
-const mediaTone = (type: string) => {
-  if (type === 'camera_feed') return 'info'
-  if (type === 'photo') return 'success'
-  return 'neutral'
-}
-
-const formatDate = (value?: string | null) => {
-  if (!value) return '—'
-  if (!value.includes('T')) return value
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  const pad = (input: number) => String(input).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
-
-const formatDateTime = (value?: string | null) => {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  const pad = (input: number) => String(input).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(
-    date.getHours(),
-  )}:${pad(date.getMinutes())}`
-}
-
-const resolveProjectId = (item: { project_id?: string; project?: string }) =>
-  item.project_id ?? item.project ?? ''
-
-const toDateInput = (value?: string | null) => (value ? formatDate(value) : '')
-const toDateTimeInput = (value?: string | null) => {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  const pad = (input: number) => String(input).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-    date.getHours(),
-  )}:${pad(date.getMinutes())}`
-}
-const toDateTimePayload = (value: string) => (value ? new Date(value).toISOString() : null)
 
 type SkeletonTableProps = {
   headers: string[]
@@ -690,7 +634,7 @@ const RfiForm = ({ initial, submitting, onSubmit, onCancel }: RfiFormProps) => {
   )
 }
 
-const ProjectWorkspacePage = () => {
+const ProjectWorkspace = () => {
   const { projectId } = useParams()
   const queryClient = useQueryClient()
   const [activityPage, setActivityPage] = useState(1)
@@ -1869,4 +1813,4 @@ const ProjectWorkspacePage = () => {
   )
 }
 
-export default ProjectWorkspacePage
+export default ProjectWorkspace

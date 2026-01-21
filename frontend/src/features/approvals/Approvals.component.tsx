@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useApprovals } from '@/api/queries'
 
 const statusTone = (status: string) => {
@@ -8,7 +8,7 @@ const statusTone = (status: string) => {
   return 'danger'
 }
 
-const ApprovalsPage = () => {
+const Approvals = () => {
   const { data: items = [], isLoading: loading, isError } = useApprovals()
 
   if (loading) {
@@ -77,4 +77,4 @@ const ApprovalsPage = () => {
   )
 }
 
-export default ApprovalsPage
+export default Approvals

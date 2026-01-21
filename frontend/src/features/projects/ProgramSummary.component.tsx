@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom'
-import StatCard from '@/components/StatCard'
-import Badge from '@/components/Badge'
-import { SkeletonCard } from '@/components/Skeleton'
-import { BarChart, DonutChart } from '@/components/Charts'
+import StatCard from '@/features/ui/stat-card/StatCard.component'
+import Badge from '@/features/ui/badge/Badge.component'
+import { SkeletonCard } from '@/features/ui/skeleton/Skeleton.component'
+import { BarChart, DonutChart } from '@/features/ui/charts/Charts.component'
 import { useProgramSummary, useProjects } from '@/api/queries'
 
 const formatCurrency = (value: number) =>
@@ -12,7 +12,7 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value)
 
-const ProgramSummaryPage = () => {
+const ProgramSummary = () => {
   const { data: summary, isLoading: loadingSummary } = useProgramSummary()
   const {
     data: projectList = [],
@@ -190,4 +190,4 @@ const ProgramSummaryPage = () => {
   )
 }
 
-export default ProgramSummaryPage
+export default ProgramSummary

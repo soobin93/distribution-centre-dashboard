@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useMediaItems } from '@/api/queries'
 
 const mediaTone = (type: string) => {
@@ -8,7 +8,7 @@ const mediaTone = (type: string) => {
   return 'neutral'
 }
 
-const MediaLibraryPage = () => {
+const MediaLibrary = () => {
   const { data: items = [], isLoading: loading, isError } = useMediaItems()
 
   if (loading) {
@@ -78,4 +78,4 @@ const MediaLibraryPage = () => {
   )
 }
 
-export default MediaLibraryPage
+export default MediaLibrary

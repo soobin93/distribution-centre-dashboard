@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useBudgets } from '@/api/queries'
 
 const formatCurrency = (value: number | string, currency: string) =>
@@ -15,7 +15,7 @@ const statusTone = (status: string) => {
   return 'danger'
 }
 
-const BudgetsPage = () => {
+const Budgets = () => {
   const { data: items = [], isLoading: loading, isError } = useBudgets()
 
   if (loading) {
@@ -84,4 +84,4 @@ const BudgetsPage = () => {
   )
 }
 
-export default BudgetsPage
+export default Budgets

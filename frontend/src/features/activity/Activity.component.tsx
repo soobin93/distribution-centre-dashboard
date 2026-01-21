@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useActivityLogs } from '@/api/queries'
 
 const actionTone = (action: string) => {
@@ -9,7 +9,7 @@ const actionTone = (action: string) => {
   return 'neutral'
 }
 
-const ActivityPage = () => {
+const Activity = () => {
   const { data: payload, isLoading: loading, isError } = useActivityLogs()
   const items = payload?.results ?? []
 
@@ -79,4 +79,4 @@ const ActivityPage = () => {
   )
 }
 
-export default ActivityPage
+export default Activity

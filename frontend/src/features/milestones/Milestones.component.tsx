@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useMilestones } from '@/api/queries'
 
 const statusTone = (status: string) => {
@@ -9,7 +9,7 @@ const statusTone = (status: string) => {
   return 'neutral'
 }
 
-const MilestonesPage = () => {
+const Milestones = () => {
   const { data: items = [], isLoading: loading, isError } = useMilestones()
 
   if (loading) {
@@ -79,4 +79,4 @@ const MilestonesPage = () => {
   )
 }
 
-export default MilestonesPage
+export default Milestones

@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useRisks } from '@/api/queries'
 
 const ratingTone = (rating: number) => {
@@ -8,7 +8,7 @@ const ratingTone = (rating: number) => {
   return 'success'
 }
 
-const RisksPage = () => {
+const Risks = () => {
   const { data: items = [], isLoading: loading, isError } = useRisks()
 
   if (loading) {
@@ -77,4 +77,4 @@ const RisksPage = () => {
   )
 }
 
-export default RisksPage
+export default Risks

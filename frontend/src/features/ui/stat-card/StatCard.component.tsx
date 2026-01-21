@@ -1,4 +1,4 @@
-import '@/components/StatCard.css'
+import '@/features/ui/stat-card/StatCard.component.css'
 
 type StatCardProps = {
   label: string

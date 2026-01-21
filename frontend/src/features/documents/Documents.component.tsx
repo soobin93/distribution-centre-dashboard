@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useDocuments } from '@/api/queries'
 
 const statusTone = (status: string) => {
@@ -8,7 +8,7 @@ const statusTone = (status: string) => {
   return 'neutral'
 }
 
-const DocumentsPage = () => {
+const Documents = () => {
   const { data: items = [], isLoading: loading, isError } = useDocuments()
 
   if (loading) {
@@ -75,4 +75,4 @@ const DocumentsPage = () => {
   )
 }
 
-export default DocumentsPage
+export default Documents

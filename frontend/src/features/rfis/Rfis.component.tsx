@@ -1,5 +1,5 @@
-import Badge from '@/components/Badge'
-import Spinner from '@/components/Spinner'
+import Badge from '@/features/ui/badge/Badge.component'
+import Spinner from '@/features/ui/spinner/Spinner.component'
 import { useRfis } from '@/api/queries'
 
 const statusTone = (status: string) => {
@@ -8,7 +8,7 @@ const statusTone = (status: string) => {
   return 'neutral'
 }
 
-const RfisPage = () => {
+const Rfis = () => {
   const { data: items = [], isLoading: loading, isError } = useRfis()
 
   if (loading) {
@@ -77,4 +77,4 @@ const RfisPage = () => {
   )
 }
 
-export default RfisPage
+export default Rfis
